@@ -1,0 +1,303 @@
+openapi: 3.0.3
+info:
+  title: Tapakila Functionalities
+  version: "1.0.3"
+servers:
+  - url: https://tapakila.com
+tags:
+  - name: User management
+    description: Managing the user/admin login or signing up .
+  - name: Event management
+    description: Managing and following the upcoming event(s) .
+  - name: Ticket management
+    description: Managing and following the ticket's sales .
+
+paths:
+  /auth/signup:
+    post:
+      tags:
+        - User management
+      summary: User registration
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/User"
+      responses:
+        "201":
+          description: User successfully registered
+
+  /auth/login:
+    post:
+      tags:
+        - User management
+      summary: User login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+      responses:
+        "200":
+          description: Successful login, returns a JWT token
+
+  /users/me:
+    get:
+      security:
+        - bearerAuth: []
+      tags:
+        - User management
+      summary: Retrieve logged-in user's profile
+      responses:
+        "200":
+          description: User profile retrieved
+    put:
+      security:
+        - bearerAuth: []
+      tags:
+        - User management
+      summary: Update user profile
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/User"
+      responses:
+        "200":
+          description: User profile updated
+
+  /users:
+    get:
+      security:
+        - bearerAuth: []
+      tags:
+        - User management
+      summary: List users (Admin only)
+      responses:
+        "200":
+          description: Users list retrieved
+
+  /users/{id}/role:
+    patch:
+      security:
+        - bearerAuth: []
+      tags:
+        - User management
+      summary: Manage user roles (Admin only)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                role:
+                  type: string
+                  enum: [User, Admin, Organizer]
+      responses:
+        "200":
+          description: Role updated
+
+  /events:
+    post:
+      security:
+        - bearerAuth: []
+      tags:
+        - Event management
+      summary: Create an event (Admin/Organizer)
+      responses:
+        "201":
+          description: Event created
+    get:
+      tags:
+        - Event management
+      summary: List all events
+      responses:
+        "200":
+          description: Events list retrieved
+
+  /events/{id}:
+    get:
+      tags:
+        - Event management
+      summary: Get event details
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Event details retrieved
+    put:
+      security:
+        - bearerAuth: []
+      tags:
+        - Event management
+      summary: Update an event (Admin/Organizer)
+      responses:
+        "200":
+          description: Event updated
+    delete:
+      security:
+        - bearerAuth: []
+      tags:
+        - Event management
+      summary: Delete an event (Admin/Organizer)
+      responses:
+        "204":
+          description: Event deleted
+
+  /events/{id}/tickets:
+    post:
+      security:
+        - bearerAuth: []
+      tags:
+        - Ticket management
+      summary: Create a ticket type for an event
+      responses:
+        "201":
+          description: Ticket type created
+    get:
+      tags:
+        - Ticket management
+      summary: List ticket types for an event
+      responses:
+        "200":
+          description: Ticket types retrieved
+
+  /tickets/{id}:
+    put:
+      security:
+        - bearerAuth: []
+      tags:
+        - Ticket management
+      summary: Update a ticket type
+      responses:
+        "200":
+          description: Ticket type updated
+    delete:
+      security:
+        - bearerAuth: []
+      tags:
+        - Ticket management
+      summary: Delete a ticket type
+      responses:
+        "204":
+          description: Ticket type deleted
+
+  /reservations:
+    post:
+      security:
+        - bearerAuth: []
+      tags:
+        - Ticket management
+      summary: Book a ticket
+      responses:
+        "201":
+          description: Reservation made
+    get:
+      security:
+        - bearerAuth: []
+      tags:
+        - Ticket management
+      summary: List all reservations (Admin only)
+      responses:
+        "200":
+          description: Reservations list retrieved
+
+  /users/me/reservations:
+    get:
+      security:
+        - bearerAuth: []
+      tags:
+        - Ticket management
+      summary: List user reservations
+      responses:
+        "200":
+          description: User reservations retrieved
+
+  /reservations/{id}:
+    get:
+      security:
+        - bearerAuth: []
+      tags:
+        - Ticket management
+      summary: Get reservation details
+      responses:
+        "200":
+          description: Reservation details retrieved
+    delete:
+      security:
+        - bearerAuth: []
+      tags:
+        - Ticket management
+      summary: Cancel a reservation
+      responses:
+        "204":
+          description: Reservation canceled
+
+  /events/{id}/status:
+    patch:
+      security:
+        - bearerAuth: []
+      tags:
+        - Event management
+      summary: Update event status
+      responses:
+        "200":
+          description: Event status updated
+
+  /tickets/{id}/status:
+    patch:
+      security:
+        - bearerAuth: []
+      tags:
+        - Ticket management
+      summary: Enable/Disable ticket sales
+      responses:
+        "200":
+          description: Ticket status updated
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        firstName:
+          type: string
+        lastName:
+          type: string
+        email:
+          type: string
+          format: email
+        role:
+          type: string
+          enum: [User, Admin]
+        creationDate:
+          type: string
+          format: date-time
