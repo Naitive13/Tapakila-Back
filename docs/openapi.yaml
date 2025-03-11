@@ -151,6 +151,12 @@ paths:
       tags:
         - Event management
       summary: Update an event (Admin/Organizer)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
       responses:
         "200":
           description: Event updated
@@ -160,6 +166,12 @@ paths:
       tags:
         - Event management
       summary: Delete an event (Admin/Organizer)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
       responses:
         "204":
           description: Event deleted
@@ -171,6 +183,12 @@ paths:
       tags:
         - Ticket management
       summary: Create a ticket type for an event
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
       responses:
         "201":
           description: Ticket type created
@@ -178,6 +196,12 @@ paths:
       tags:
         - Ticket management
       summary: List ticket types for an event
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
       responses:
         "200":
           description: Ticket types retrieved
@@ -189,6 +213,12 @@ paths:
       tags:
         - Ticket management
       summary: Update a ticket type
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
       responses:
         "200":
           description: Ticket type updated
@@ -198,6 +228,12 @@ paths:
       tags:
         - Ticket management
       summary: Delete a ticket type
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
       responses:
         "204":
           description: Ticket type deleted
@@ -240,6 +276,12 @@ paths:
       tags:
         - Ticket management
       summary: Get reservation details
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
       responses:
         "200":
           description: Reservation details retrieved
@@ -249,6 +291,12 @@ paths:
       tags:
         - Ticket management
       summary: Cancel a reservation
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
       responses:
         "204":
           description: Reservation canceled
@@ -260,6 +308,12 @@ paths:
       tags:
         - Event management
       summary: Update event status
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
       responses:
         "200":
           description: Event status updated
@@ -271,6 +325,12 @@ paths:
       tags:
         - Ticket management
       summary: Enable/Disable ticket sales
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
       responses:
         "200":
           description: Ticket status updated
