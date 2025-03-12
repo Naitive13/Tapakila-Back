@@ -5,8 +5,12 @@ info:
 servers:
   - url: https://tapakila.com
 tags:
-  - name: User management
-    description: Managing the user/admin login or signing up .
+  - name: User Auth
+    description: Managing the login/signup for users.
+  - name: User Profile
+    description: Managing the user's profile
+  - name: Admin
+    description: Operation for Admins only
   - name: Event management
     description: Managing and following the upcoming event(s) .
   - name: Ticket management
@@ -16,14 +20,14 @@ paths:
   /auth/signup:
     post:
       tags:
-        - User management
+        - User Auth
       summary: User registration
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/User"
+              $ref: "#/components/schemas/UserSignup"
       responses:
         "201":
           description: User successfully registered
@@ -31,46 +35,48 @@ paths:
   /auth/login:
     post:
       tags:
-        - User management
+        - User Auth
       summary: User login
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                email:
-                  type: string
-                  format: email
-                password:
-                  type: string
+              $ref: "#/components/schemas/UserLoginRequest"
       responses:
         "200":
           description: Successful login, returns a JWT token
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserLoginResponse"
 
   /users/me:
     get:
       security:
         - bearerAuth: []
       tags:
-        - User management
+        - User Profile
       summary: Retrieve logged-in user's profile
       responses:
         "200":
           description: User profile retrieved
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserCompleteInfo"
     put:
       security:
         - bearerAuth: []
       tags:
-        - User management
+        - User Profile
       summary: Update user profile
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/User"
+              $ref: "#/components/schemas/UserUpdate"
       responses:
         "200":
           description: User profile updated
@@ -80,19 +86,25 @@ paths:
       security:
         - bearerAuth: []
       tags:
-        - User management
-      summary: List users (Admin only)
+        - Admin
+      summary: List users
       responses:
         "200":
           description: Users list retrieved
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/UserCompleteInfo"
 
   /users/{id}/role:
-    patch:
+    put:
       security:
         - bearerAuth: []
       tags:
-        - User management
-      summary: Manage user roles (Admin only)
+        - Admin
+      summary: Manage user roles
       parameters:
         - name: id
           in: path
@@ -120,6 +132,12 @@ paths:
       tags:
         - Event management
       summary: Create an event (Admin/Organizer)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/EventCreate"
       responses:
         "201":
           description: Event created
@@ -130,6 +148,12 @@ paths:
       responses:
         "200":
           description: Events list retrieved
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Event"
 
   /events/{id}:
     get:
@@ -145,6 +169,10 @@ paths:
       responses:
         "200":
           description: Event details retrieved
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Event"
     put:
       security:
         - bearerAuth: []
@@ -157,6 +185,12 @@ paths:
           required: true
           schema:
             type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/EventCreate"
       responses:
         "200":
           description: Event updated
@@ -189,6 +223,12 @@ paths:
           required: true
           schema:
             type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TicketCreate"
       responses:
         "201":
           description: Ticket type created
@@ -205,6 +245,12 @@ paths:
       responses:
         "200":
           description: Ticket types retrieved
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Ticket"
 
   /tickets/{id}:
     put:
@@ -219,6 +265,12 @@ paths:
           required: true
           schema:
             type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TicketCreate"
       responses:
         "200":
           description: Ticket type updated
@@ -245,6 +297,12 @@ paths:
       tags:
         - Ticket management
       summary: Book a ticket
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ReservationCreate"
       responses:
         "201":
           description: Reservation made
@@ -257,6 +315,12 @@ paths:
       responses:
         "200":
           description: Reservations list retrieved
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Reservation"
 
   /users/me/reservations:
     get:
@@ -268,6 +332,12 @@ paths:
       responses:
         "200":
           description: User reservations retrieved
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Reservation"
 
   /reservations/{id}:
     get:
@@ -285,6 +355,10 @@ paths:
       responses:
         "200":
           description: Reservation details retrieved
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Reservation"
     delete:
       security:
         - bearerAuth: []
@@ -302,7 +376,7 @@ paths:
           description: Reservation canceled
 
   /events/{id}/status:
-    patch:
+    put:
       security:
         - bearerAuth: []
       tags:
@@ -314,12 +388,27 @@ paths:
           required: true
           schema:
             type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                eventStatus:
+                  type: string
+                  example: "A venir"
+                  enum:
+                    - "A venir"
+                    - "En cours"
+                    - "Passé"
+                    - "Annulé"
       responses:
         "200":
           description: Event status updated
 
   /tickets/{id}/status:
-    patch:
+    put:
       security:
         - bearerAuth: []
       tags:
@@ -342,22 +431,164 @@ components:
       scheme: bearer
       bearerFormat: JWT
   schemas:
-    User:
+    UserLoginRequest:
       type: object
       properties:
-        id:
+        username:
           type: string
-          format: uuid
-        firstName:
+          example: "John Doe"
+        password:
           type: string
-        lastName:
+          example: "password"
+    UserLoginResponse:
+      type: object
+      properties:
+        accessToken:
           type: string
+          example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJodHRwczovL2V4YW1wbGUuYXV0aDAuY29tLyIsImF1ZCI6Imh0dHBzOi8vYXBpLmV4YW1wbGUuY29tL2NhbGFuZGFyL3YxLyIsInN1YiI6InVzcl8xMjMiLCJpYXQiOjE0NTg3ODU3OTYsImV4cCI6MTQ1ODg3MjE5Nn0.CA7eaHjIHz5NxeIJoFK9krqaeZrPLwmMmgI_XiQiIkQ"
+    UserSignup:
+      type: object
+      allOf:
+        - $ref: "#/components/schemas/UserBasic"
+      properties:
+        password:
+          type: string
+          format: password
+          example: "passtest"
+    UserBasic:
+      type: object
+      properties:
+        userName:
+          type: string
+          example: "John Doe"
         email:
           type: string
           format: email
+          example: "example@email.com"
         role:
           type: string
-          enum: [User, Admin]
+          example: "User"
+          enum:
+            - User
+            - Admin
         creationDate:
           type: string
           format: date-time
+    UserCompleteInfo:
+      type: object
+      allOf:
+        - $ref: "#/components/schemas/UserBasic"
+      properties:
+        userId:
+          type: string
+          format: uuid
+          example: "550e8400-e29b-41d4-a716-446655440000"
+        reservations:
+          type: array
+          items:
+            $ref: "#/components/schemas/Reservation"
+    UserUpdate:
+      type: object
+      properties:
+        userName:
+          type: string
+          example: "John Doe"
+        email:
+          type: string
+          format: email
+          example: "example@email.com"
+        userId:
+          type: string
+          format: uuid
+          example: "550e8400-e29b-41d4-a716-446655440000"
+
+    Reservation:
+      type: object
+      allOf:
+        - $ref: "#/components/schemas/ReservationCreate"
+      properties:
+        reservationID:
+          type: string
+          format: uuid
+          example: "550e8400-e29b-41d4-a716-446655440000"
+
+    ReservationCreate:
+      type: object
+      properties:
+        ticketID:
+          type: string
+          format: uuid
+          example: "550e8400-e29b-41d4-a716-446655440000"
+        userID:
+          type: string
+          format: uuid
+          example: "550e8400-e29b-41d4-a716-446655440000"
+        reservationDate:
+          type: string
+          format: date-time
+
+    EventCreate:
+      type: object
+      properties:
+        title:
+          type: string
+          example: "Concert Magic"
+        eventType:
+          type: string
+          example: "Concert"
+          enum:
+            - Concert
+            - Spectacle
+            - Seminaire
+        ticketNumber:
+          type: integer
+          format: int64
+          example: 160
+        eventDate:
+          type: string
+          format: date-time
+        eventPoster:
+          type: string
+          format: url
+          example: "https://placehold.co/400x300"
+        eventStatus:
+          type: string
+          example: "A venir"
+          enum:
+            - "A venir"
+            - "En cours"
+            - "Passé"
+            - "Annulé"
+    Event:
+      type: object
+      allOf:
+        - $ref: "#/components/schemas/EventCreate"
+      properties:
+        eventId:
+          type: string
+          format: uuid
+          example: "550e8400-e29b-41d4-a716-446655440000"
+
+    TicketCreate:
+      type: object
+      properties:
+        eventId:
+          type: string
+          format: uuid
+          example: "550e8400-e29b-41d4-a716-446655440000"
+        ticketType:
+          type: string
+          example: "VIP"
+          enum:
+            - VIP
+            - Gold
+            - Silver
+    Ticket:
+      type: object
+      allOf:
+        - $ref: "#/components/schemas/TicketCreate"
+      properties:
+        ticketID:
+          type: string
+          format: uuid
+          example: "550e8400-e29b-41d4-a716-446655440000"
