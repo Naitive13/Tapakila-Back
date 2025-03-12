@@ -6,6 +6,7 @@ create DATABASE tapakila_db;
 
 create type reservation_status as ENUM('reserved', 'available');
 create type user_type as ENUM('standard', 'admin');
+create type ticket_type as ENUM('vip', 'gold', 'silver', 'bronze', 'regular');
 create type event_type as ENUM (
     'CONCERT',
     'SPORT',
