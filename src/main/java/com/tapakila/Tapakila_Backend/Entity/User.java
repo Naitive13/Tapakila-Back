@@ -3,6 +3,7 @@ package com.tapakila.Tapakila_Backend.Entity;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.ArrayList;
 import java.util.UUID;
 
 @Getter
@@ -15,12 +16,4 @@ public class User {
     private String userType;
     private String creationDate;
 
-    public User(UUID userId, String userName, String userEmail, String userPassword, String userType, String creationDate) {
-        this.userId = userId;
-        this.userName = userName;
-        this.userEmail = userEmail;
-        this.userPassword = userPassword;
-        this.userType = userType;
-        this.creationDate = creationDate;
-    }
 }
