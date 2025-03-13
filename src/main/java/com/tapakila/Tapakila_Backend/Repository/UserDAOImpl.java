@@ -1,6 +1,7 @@
 package com.tapakila.Tapakila_Backend.Repository;
 
 import com.tapakila.Tapakila_Backend.Entity.User;
+import com.tapakila.Tapakila_Backend.Entity.UserType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Repository;
@@ -49,8 +50,8 @@ public class UserDAOImpl implements UserDAO {
                 user.setUserName(rs.getString("user_name"));
                 user.setUserEmail(rs.getString("user_email"));
                 user.setUserPassword(rs.getString("user_password"));
-                user.setUserType(rs.getString("user_type"));
-                user.setCreationDate(rs.getString("creation_date"));
+                user.setUserType(UserType.valueOf(rs.getString("user_type")));
+                user.setCreationDate(rs.getString("user_creation_date"));
                 return Optional.of(user);
             }
         } catch (SQLException e) {
@@ -61,14 +62,14 @@ public class UserDAOImpl implements UserDAO {
 
     @Override
     public void save(User user) {
-        String sql = "INSERT INTO users (user_id, user_name, user_email, user_password, user_type) VALUES (?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO users (user_id, user_name, user_email, user_password, user_type) VALUES (?, ?, ?, ?, ?::user_type)";
         try (Connection conn = datasource.getConnection();
              PreparedStatement preparedStatement = conn.prepareStatement(sql)) {
             preparedStatement.setObject(1, user.getUserId());
             preparedStatement.setString(2, user.getUserName());
             preparedStatement.setString(3, user.getUserEmail());
             preparedStatement.setString(4, passwordEncoder.encode(user.getUserPassword())); // Hash the password
-            preparedStatement.setString(5, user.getUserType());
+            preparedStatement.setString(5, String.valueOf(user.getUserType()));
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException(e);
