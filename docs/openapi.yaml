@@ -466,11 +466,9 @@ components:
           format: email
           example: "example@email.com"
         role:
-          type: string
-          example: "User"
-          enum:
-            - User
-            - Admin
+          type:
+            type: string
+            enum: [standard, Admin]
         creationDate:
           type: string
           format: date-time
