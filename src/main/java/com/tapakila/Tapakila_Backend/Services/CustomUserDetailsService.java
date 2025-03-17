@@ -2,16 +2,20 @@ package com.tapakila.Tapakila_Backend.Services;
 
 
 import com.tapakila.Tapakila_Backend.Entity.User;
+import com.tapakila.Tapakila_Backend.Entity.UserType;
 import com.tapakila.Tapakila_Backend.Repository.UserDAOImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
@@ -22,8 +26,14 @@ public class CustomUserDetailsService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         try {
-            User user = userRepository.getUserByEmail(email)
-                    .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + email));
+            User user = userRepository.getUserByEmail(email);
+
+            List<GrantedAuthority> authorities = new ArrayList<>();
+            if (user.getUserType() == UserType.admin) {
+                authorities.add(new SimpleGrantedAuthority("ROLE_ADMIN"));
+            } else {
+                authorities.add(new SimpleGrantedAuthority("ROLE_STANDARD"));
+            }
 
             return new org.springframework.security.core.userdetails.User(
                     user.getUserEmail(),
