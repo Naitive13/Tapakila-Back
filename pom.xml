@@ -54,7 +54,6 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
-
 		<dependency>
 			<groupId>io.jsonwebtoken</groupId>
 			<artifactId>jjwt-api</artifactId>
@@ -106,8 +105,6 @@
 			<version>4.0.1</version>
 			<scope>provided</scope>
 		</dependency>
-
-
 	</dependencies>
 
 	<build>
