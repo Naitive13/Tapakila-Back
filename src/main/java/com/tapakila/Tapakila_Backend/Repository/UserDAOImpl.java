@@ -10,6 +10,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -57,6 +59,29 @@ public class UserDAOImpl implements UserDAO {
             throw new RuntimeException(e);
         }
         return user;
+    }
+
+    @Override
+    public List<User> getAll() {
+        List<User> userList = new ArrayList<>();
+        String sql = "SELECT (user_id, user_email, user_name, user_type, user_creation_date) FROM users";
+        try (Connection conn = datasource.getConnection();
+             PreparedStatement preparedStatement = conn.prepareStatement(sql)) {
+            ResultSet rs = preparedStatement.executeQuery();
+            while (rs.next()) {
+                User user  = new User();
+                user.setUserId(UUID.fromString(rs.getString("user_id")));
+                user.setUserName(rs.getString("user_name"));
+                user.setUserEmail(rs.getString("user_email"));
+                user.setUserPassword(rs.getString("user_password"));
+                user.setUserType(UserType.valueOf(rs.getString("user_type")));
+                user.setCreationDate(rs.getString("user_creation_date"));
+                userList.add(user);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return userList;
     }
 
     @Override
