@@ -10,6 +10,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -50,10 +51,10 @@ public class UserDAOImpl implements UserDAO {
             while (rs.next()) {
                 user.setUserId(UUID.fromString(rs.getString("user_id")));
                 user.setUserName(rs.getString("user_name"));
-                user.setUserEmail(rs.getString("user_email"));
-                user.setUserPassword(rs.getString("user_password"));
-                user.setUserType(UserType.valueOf(rs.getString("user_type")));
-                user.setCreationDate(rs.getString("user_creation_date"));
+                user.setEmail(rs.getString("user_email"));
+                user.setPassword(rs.getString("user_password"));
+                user.setType(UserType.valueOf(rs.getString("user_type")));
+                user.setCreationDate(rs.getObject("user_creation_date", Instant.class));
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -72,10 +73,10 @@ public class UserDAOImpl implements UserDAO {
                 User user  = new User();
                 user.setUserId(UUID.fromString(rs.getString("user_id")));
                 user.setUserName(rs.getString("user_name"));
-                user.setUserEmail(rs.getString("user_email"));
-                user.setUserPassword(rs.getString("user_password"));
-                user.setUserType(UserType.valueOf(rs.getString("user_type")));
-                user.setCreationDate(rs.getString("user_creation_date"));
+                user.setEmail(rs.getString("user_email"));
+                user.setPassword(rs.getString("user_password"));
+                user.setType(UserType.valueOf(rs.getString("user_type")));
+                user.setCreationDate(rs.getObject("user_creation_date", Instant.class));
                 userList.add(user);
             }
         } catch (SQLException e) {
@@ -91,9 +92,9 @@ public class UserDAOImpl implements UserDAO {
              PreparedStatement preparedStatement = conn.prepareStatement(sql)) {
             preparedStatement.setObject(1, user.getUserId());
             preparedStatement.setString(2, user.getUserName());
-            preparedStatement.setString(3, user.getUserEmail());
-            preparedStatement.setString(4, passwordEncoder.encode(user.getUserPassword()));
-            preparedStatement.setString(5, String.valueOf(user.getUserType()));
+            preparedStatement.setString(3, user.getEmail());
+            preparedStatement.setString(4, passwordEncoder.encode(user.getPassword()));
+            preparedStatement.setString(5, String.valueOf(user.getType()));
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException(e);
