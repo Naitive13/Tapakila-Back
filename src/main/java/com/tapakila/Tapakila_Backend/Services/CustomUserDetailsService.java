@@ -29,15 +29,15 @@ public class CustomUserDetailsService implements UserDetailsService {
             User user = userRepository.getUserByEmail(email);
 
             List<GrantedAuthority> authorities = new ArrayList<>();
-            if (user.getUserType() == UserType.admin) {
+            if (user.getType() == UserType.admin) {
                 authorities.add(new SimpleGrantedAuthority("ROLE_ADMIN"));
             } else {
                 authorities.add(new SimpleGrantedAuthority("ROLE_STANDARD"));
             }
 
             return new org.springframework.security.core.userdetails.User(
-                    user.getUserEmail(),
-                    user.getUserPassword(),
+                    user.getEmail(),
+                    user.getPassword(),
                     new ArrayList<>()
             );
         } catch (Exception e){

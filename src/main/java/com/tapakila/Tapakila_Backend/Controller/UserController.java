@@ -26,7 +26,7 @@ public class UserController {
         User user = userDAO.getUserByEmail(email);
         UserDetailResponse userDetail = new UserDetailResponse(
                 user.getUserName(),
-                user.getUserEmail(),
+                user.getEmail(),
                 user.getUserId()
         );
 

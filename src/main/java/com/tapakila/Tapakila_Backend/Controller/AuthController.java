@@ -34,7 +34,7 @@ public class AuthController {
     public ResponseEntity<String> signup(@RequestBody SignupRequest signupRequest) {
         try {
             // Check if the email is already registered
-            if (userRepository.existsByUserEmail(signupRequest.getUserEmail())) {
+            if (userRepository.existsByUserEmail(signupRequest.getEmail())) {
                 return ResponseEntity.status(HttpStatus.CONFLICT).body("Email already registered");
             }
 
@@ -42,9 +42,9 @@ public class AuthController {
             User user = new User();
             user.setUserId(UUID.randomUUID());
             user.setUserName(signupRequest.getUserName());
-            user.setUserEmail(signupRequest.getUserEmail());
-            user.setUserPassword(signupRequest.getUserPassword()); // Password will be hashed in the repository
-            user.setUserType(UserType.valueOf(String.valueOf(signupRequest.getUserType())));
+            user.setEmail(signupRequest.getEmail());
+            user.setPassword(signupRequest.getPassword()); // Password will be hashed in the repository
+            user.setType(UserType.valueOf(String.valueOf(signupRequest.getType())));
 
             // Save the user to the database
             userRepository.save(user);
