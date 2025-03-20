@@ -13,6 +13,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.Instant;
 import java.util.UUID;
 
 @RestController
@@ -45,6 +46,7 @@ public class AuthController {
             user.setEmail(signupRequest.getEmail());
             user.setPassword(signupRequest.getPassword()); // Password will be hashed in the repository
             user.setType(UserType.valueOf(String.valueOf(signupRequest.getType())));
+            user.setCreationDate(Instant.now());
 
             // Save the user to the database
             userRepository.save(user);
