@@ -51,7 +51,7 @@ public class UserDAOImpl implements UserDAO {
             preparedStatement.setString(1, email);
             ResultSet rs = preparedStatement.executeQuery();
             while (rs.next()) {
-                user.setUserId(UUID.fromString(rs.getString("user_id")));
+                user.setUserId(rs.getString("user_id"));
                 user.setUserName(rs.getString("user_name"));
                 user.setEmail(rs.getString("user_email"));
                 user.setPassword(rs.getString("user_password"));
@@ -68,18 +68,17 @@ public class UserDAOImpl implements UserDAO {
     @Override
     public List<User> getAll() {
         List<User> userList = new ArrayList<>();
-        String sql = "SELECT (user_id, user_email, user_name, user_type, user_creation_date) FROM users";
+        String sql = "SELECT user_id::TEXT AS user_id, user_email, user_name, user_type, user_creation_date FROM users";
         try (Connection conn = datasource.getConnection();
              PreparedStatement preparedStatement = conn.prepareStatement(sql)) {
             ResultSet rs = preparedStatement.executeQuery();
             while (rs.next()) {
                 User user  = new User();
-                user.setUserId(UUID.fromString(rs.getString("user_id")));
+                user.setUserId(rs.getString("user_id"));
                 user.setUserName(rs.getString("user_name"));
                 user.setEmail(rs.getString("user_email"));
-                user.setPassword(rs.getString("user_password"));
                 user.setType(UserType.valueOf(rs.getString("user_type")));
-                user.setCreationDate(rs.getObject("user_creation_date", Instant.class));
+                user.setCreationDate(rs.getTimestamp("user_creation_date").toInstant());
                 userList.add(user);
             }
         } catch (SQLException e) {
