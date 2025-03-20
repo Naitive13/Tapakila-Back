@@ -19,11 +19,13 @@ import java.util.UUID;
 @Repository
 public class UserDAOImpl implements UserDAO {
 
-    @Autowired
-    private Datasource datasource;
+    private final Datasource datasource;
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    public UserDAOImpl(Datasource datasource){
+        this.datasource = datasource;
+    }
     @Override
     public boolean existsByUserEmail(String email) {
         String sql = "SELECT COUNT(*) FROM users WHERE user_email = ?";
@@ -54,7 +56,7 @@ public class UserDAOImpl implements UserDAO {
                 user.setEmail(rs.getString("user_email"));
                 user.setPassword(rs.getString("user_password"));
                 user.setType(UserType.valueOf(rs.getString("user_type")));
-                user.setCreationDate(rs.getObject("user_creation_date", Instant.class));
+                user.setCreationDate(rs.getTimestamp("user_creation_date").toInstant());
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -87,7 +89,7 @@ public class UserDAOImpl implements UserDAO {
 
     @Override
     public void save(User user) {
-        String sql = "INSERT INTO users (user_id, user_name, user_email, user_password, user_type) VALUES (?, ?, ?, ?, ?::user_type)";
+        String sql = "INSERT INTO users (user_id, user_name, user_email, user_password, user_type, user_creation_date) VALUES (?, ?, ?, ?, ?::user_type, ?::TIMESTAMP)";
         try (Connection conn = datasource.getConnection();
              PreparedStatement preparedStatement = conn.prepareStatement(sql)) {
             preparedStatement.setObject(1, user.getUserId());
@@ -95,6 +97,7 @@ public class UserDAOImpl implements UserDAO {
             preparedStatement.setString(3, user.getEmail());
             preparedStatement.setString(4, passwordEncoder.encode(user.getPassword()));
             preparedStatement.setString(5, String.valueOf(user.getType()));
+            preparedStatement.setString(6, String.valueOf(user.getCreationDate()));
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException(e);

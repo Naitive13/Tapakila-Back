@@ -2,6 +2,7 @@ package com.tapakila.Tapakila_Backend.Controller;
 
 import com.tapakila.Tapakila_Backend.Entity.User;
 import com.tapakila.Tapakila_Backend.Entity.UserDetailResponse;
+import com.tapakila.Tapakila_Backend.Repository.Datasource;
 import com.tapakila.Tapakila_Backend.Repository.UserDAOImpl;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -15,8 +16,8 @@ import java.util.List;
 @RestController
 @RequestMapping("/user")
 public class UserController {
-
-    UserDAOImpl userDAO;
+    Datasource datasource = new Datasource();
+    UserDAOImpl userDAO = new UserDAOImpl(datasource);
 
     @RequestMapping("/me")
     public ResponseEntity<UserDetailResponse> getCurrentUser() {
