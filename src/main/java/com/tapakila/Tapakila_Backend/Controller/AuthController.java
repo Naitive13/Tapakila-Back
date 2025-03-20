@@ -48,6 +48,7 @@ public class AuthController {
             user.setType(UserType.valueOf(String.valueOf(signupRequest.getType())));
             user.setCreationDate(Instant.now());
 
+
             // Save the user to the database
             userRepository.save(user);
 
