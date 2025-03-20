@@ -4,13 +4,10 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.UUID;
-
 @Getter
 @Setter
 public class User {
-    private UUID userId;
+    private String userId;
     private String userName;
     private String email;
     private String password;

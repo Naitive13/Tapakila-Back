@@ -1,14 +1,15 @@
 package com.tapakila.Tapakila_Backend.Entity;
 
 
-import java.util.UUID;
+import lombok.Getter;
 
+@Getter
 public class UserDetailResponse {
     private final String userName;
     private final String userEmail;
-    private final UUID userId;
+    private final String userId;
 
-    public UserDetailResponse(String userName, String userEmail, UUID userId) {
+    public UserDetailResponse(String userName, String userEmail, String userId) {
         this.userName = userName;
         this.userEmail = userEmail;
         this.userId = userId;

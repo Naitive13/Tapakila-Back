@@ -41,7 +41,7 @@ public class AuthController {
 
             // Create a new user
             User user = new User();
-            user.setUserId(UUID.randomUUID());
+            user.setUserId(UUID.randomUUID().toString());
             user.setUserName(signupRequest.getUserName());
             user.setEmail(signupRequest.getEmail());
             user.setPassword(signupRequest.getPassword()); // Password will be hashed in the repository
