@@ -57,6 +57,7 @@ public class UserDAOImpl implements UserDAO {
                 user.setPassword(rs.getString("user_password"));
                 user.setType(UserType.valueOf(rs.getString("user_type")));
                 user.setCreationDate(rs.getTimestamp("user_creation_date").toInstant());
+
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -98,6 +99,7 @@ public class UserDAOImpl implements UserDAO {
             preparedStatement.setString(4, passwordEncoder.encode(user.getPassword()));
             preparedStatement.setString(5, String.valueOf(user.getType()));
             preparedStatement.setString(6, String.valueOf(user.getCreationDate()));
+
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException(e);

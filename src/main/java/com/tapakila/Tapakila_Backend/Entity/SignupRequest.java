@@ -13,4 +13,5 @@ public class SignupRequest {
     private String password;
     private UserType type;
     private Instant creationDate;
+
 }
