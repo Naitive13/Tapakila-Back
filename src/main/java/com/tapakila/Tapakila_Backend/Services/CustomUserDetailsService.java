@@ -1,6 +1,7 @@
 package com.tapakila.Tapakila_Backend.Services;
 
 
+import com.tapakila.Tapakila_Backend.Entity.CustomUserDetail;
 import com.tapakila.Tapakila_Backend.Entity.User;
 import com.tapakila.Tapakila_Backend.Entity.UserType;
 import com.tapakila.Tapakila_Backend.Repository.UserDAOImpl;
@@ -24,7 +25,7 @@ public class CustomUserDetailsService implements UserDetailsService {
     private UserDAOImpl userRepository;
 
     @Override
-    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+    public CustomUserDetail loadUserByUsername(String email) throws UsernameNotFoundException {
         try {
             User user = userRepository.getUserByEmail(email);
 
@@ -35,10 +36,11 @@ public class CustomUserDetailsService implements UserDetailsService {
                 authorities.add(new SimpleGrantedAuthority("ROLE_STANDARD"));
             }
 
-            return new org.springframework.security.core.userdetails.User(
+            return new CustomUserDetail(
                     user.getEmail(),
                     user.getPassword(),
-                    new ArrayList<>()
+                    user.getType().toString(),
+                    authorities
             );
         } catch (Exception e){
             logger.error("Error loading user by email: " + email, e);

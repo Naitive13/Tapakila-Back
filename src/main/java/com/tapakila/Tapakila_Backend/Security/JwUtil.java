@@ -1,10 +1,12 @@
 package com.tapakila.Tapakila_Backend.Security;
 
+import com.tapakila.Tapakila_Backend.Entity.CustomUserDetail;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.cglib.core.internal.Function;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
@@ -20,6 +22,18 @@ public class JwUtil {
 
     public String generateToken(UserDetails userDetails) {
         Map<String, Object> claims = new HashMap<>();
+        if (userDetails instanceof CustomUserDetail) {
+            CustomUserDetail customUser = (CustomUserDetail) userDetails;
+
+            // Add custom claims
+            claims.put("userType", customUser.getUserType()); // e.g., "admin" or "standard"
+            claims.put("email", customUser.getUsername()); // User's email
+            claims.put("userId", "12345"); // Example user ID (replace with real one)
+            claims.put("type", customUser.getAuthorities().stream()
+                    .map(GrantedAuthority::getAuthority)
+                    .toList()); // List of roles
+        }
+
         return createToken(claims, userDetails.getUsername());
     }
 
