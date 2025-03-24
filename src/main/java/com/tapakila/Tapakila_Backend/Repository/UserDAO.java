@@ -9,6 +9,7 @@ import java.util.List;
 public interface UserDAO {
     boolean existsByUserEmail(String email);
     User getUserByEmail(String email);
+    User getUserByUUID(String UUID);
     List<User> getAll();
     void save(User user);
 }
