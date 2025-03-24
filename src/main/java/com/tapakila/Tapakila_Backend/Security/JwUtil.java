@@ -24,8 +24,6 @@ public class JwUtil {
         Map<String, Object> claims = new HashMap<>();
         if (userDetails instanceof CustomUserDetail) {
             CustomUserDetail customUser = (CustomUserDetail) userDetails;
-
-            // Add custom claims
             claims.put("userType", customUser.getUserType()); // e.g., "admin" or "standard"
             claims.put("email", customUser.getUsername()); // User's email
             claims.put("userId", "12345"); // Example user ID (replace with real one)

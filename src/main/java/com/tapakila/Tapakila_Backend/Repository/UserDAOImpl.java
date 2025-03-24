@@ -89,7 +89,7 @@ public class UserDAOImpl implements UserDAO {
 
     @Override
     public void save(User user) {
-        String sql = "INSERT INTO users (user_id, user_name, user_email, user_password, user_type, user_creation_date) VALUES (?, ?, ?, ?, ?::user_type, ?::TIMESTAMP)";
+        String sql = "INSERT INTO users (user_id, user_name, user_email, user_password, user_type, user_creation_date) VALUES (?::UUID, ?, ?, ?, ?::user_type, ?::TIMESTAMP)";
         try (Connection conn = datasource.getConnection();
              PreparedStatement preparedStatement = conn.prepareStatement(sql)) {
             preparedStatement.setObject(1, user.getUserId());
