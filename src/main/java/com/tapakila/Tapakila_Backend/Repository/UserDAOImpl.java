@@ -124,4 +124,18 @@ public class UserDAOImpl implements UserDAO {
             throw new RuntimeException(e);
         }
     }
+
+    @Override
+    public void delete(String userID) {
+        String sql = "DELETE FROM users where user_id == ?::UUID";
+
+        try (Connection connection = datasource.getConnection();
+            PreparedStatement preparedStatement = connection.prepareStatement(sql)
+        ){
+            preparedStatement.setString(1, userID);
+            preparedStatement.executeUpdate();
+        }catch (SQLException e){
+            throw new RuntimeException(e);
+        }
+    }
 }
