@@ -66,6 +66,26 @@ public class UserDAOImpl implements UserDAO {
     }
 
     @Override
+    public User getUserByUUID(String UUID) {
+        User user = new User();
+        String sql = "SELECT user_id::TEXT AS user_id, user_email, user_name, user_type, user_creation_date FROM users";
+        try (Connection conn = datasource.getConnection();
+             PreparedStatement preparedStatement = conn.prepareStatement(sql)) {
+            ResultSet rs = preparedStatement.executeQuery();
+            while (rs.next()) {
+                user.setUserId(rs.getString("user_id"));
+                user.setUserName(rs.getString("user_name"));
+                user.setEmail(rs.getString("user_email"));
+                user.setType(UserType.valueOf(rs.getString("user_type")));
+                user.setCreationDate(rs.getTimestamp("user_creation_date").toInstant());
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return user;
+    }
+
+    @Override
     public List<User> getAll() {
         List<User> userList = new ArrayList<>();
         String sql = "SELECT user_id::TEXT AS user_id, user_email, user_name, user_type, user_creation_date FROM users";
