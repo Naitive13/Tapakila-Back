@@ -12,4 +12,5 @@ public interface UserDAO {
     User getUserByUUID(String UUID);
     List<User> getAll();
     void save(User user);
+    void delete(String userID);
 }
