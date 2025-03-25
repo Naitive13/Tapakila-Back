@@ -16,7 +16,9 @@ import org.springframework.web.bind.annotation.*;
 import java.time.Instant;
 import java.util.UUID;
 
+
 @RestController
+@CrossOrigin(origins = "*")
 @RequestMapping("/auth")
 public class AuthController {
 
