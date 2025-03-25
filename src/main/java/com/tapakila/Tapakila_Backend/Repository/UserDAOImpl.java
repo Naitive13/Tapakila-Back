@@ -68,9 +68,10 @@ public class UserDAOImpl implements UserDAO {
     @Override
     public User getUserByUUID(String UUID) {
         User user = new User();
-        String sql = "SELECT user_id::TEXT AS user_id, user_email, user_name, user_type, user_creation_date FROM users";
+        String sql = "SELECT user_id::TEXT AS user_id, user_email, user_name, user_type, user_creation_date FROM users where user_id = ?::UUID";
         try (Connection conn = datasource.getConnection();
              PreparedStatement preparedStatement = conn.prepareStatement(sql)) {
+            preparedStatement.setString(1, UUID);
             ResultSet rs = preparedStatement.executeQuery();
             while (rs.next()) {
                 user.setUserId(rs.getString("user_id"));
@@ -127,7 +128,7 @@ public class UserDAOImpl implements UserDAO {
 
     @Override
     public void delete(String userID) {
-        String sql = "DELETE FROM users where user_id == ?::UUID";
+        String sql = "DELETE FROM users where user_id = ?::UUID";
 
         try (Connection connection = datasource.getConnection();
             PreparedStatement preparedStatement = connection.prepareStatement(sql)
