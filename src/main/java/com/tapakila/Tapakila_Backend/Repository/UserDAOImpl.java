@@ -72,6 +72,9 @@ public class UserDAOImpl implements UserDAO {
         try (Connection conn = datasource.getConnection();
              PreparedStatement preparedStatement = conn.prepareStatement(sql)) {
             preparedStatement.setString(1, UUID);
+        String sql = "SELECT user_id::TEXT AS user_id, user_email, user_name, user_type, user_creation_date FROM users";
+        try (Connection conn = datasource.getConnection();
+             PreparedStatement preparedStatement = conn.prepareStatement(sql)) {
             ResultSet rs = preparedStatement.executeQuery();
             while (rs.next()) {
                 user.setUserId(rs.getString("user_id"));
@@ -110,7 +113,7 @@ public class UserDAOImpl implements UserDAO {
 
     @Override
     public void save(User user) {
-        String sql = "INSERT INTO users (user_id, user_name, user_email, user_password, user_type, user_creation_date) VALUES (?, ?, ?, ?, ?::user_type, ?::TIMESTAMP)";
+        String sql = "INSERT INTO users (user_id, user_name, user_email, user_password, user_type, user_creation_date) VALUES (?::UUID, ?, ?, ?, ?::user_type, ?::TIMESTAMP)";
         try (Connection conn = datasource.getConnection();
              PreparedStatement preparedStatement = conn.prepareStatement(sql)) {
             preparedStatement.setObject(1, user.getUserId());
