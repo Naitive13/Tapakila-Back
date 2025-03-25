@@ -58,19 +58,6 @@ public class UserController {
         return ResponseEntity.ok(userDetail);
     }
 
-    @GetMapping("/{userID}")
-    public ResponseEntity<UserDetailResponse> getUserByID(@PathVariable String userID) {
-        User user = userDAO.getUserByUUID(userID);
-        UserDetailResponse userDetail = new UserDetailResponse(
-                user.getUserName(),
-                user.getEmail(),
-                user.getUserId(),
-                user.getCreationDate()
-        );
-
-        return ResponseEntity.ok(userDetail);
-    }
-
     @DeleteMapping("/{userId}")
     public ResponseEntity<String>  deleteUser(@PathVariable String userId){
         try {
