@@ -16,3 +16,6 @@ JOIN
     events e ON r.event_id = e.event_id
 JOIN
     users u ON r.user_id = u.user_id;
+
+
+SELECT reservation_id, user_id, ticket_id, reservation_date from reservation_details;
