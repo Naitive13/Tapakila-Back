@@ -2,6 +2,7 @@ CREATE OR REPLACE VIEW reservation_details AS
 SELECT
     r.reservation_id,
     u.user_name,
+    u.user_id,
     u.user_email,
     e.event_title,
     t.ticket_id,
