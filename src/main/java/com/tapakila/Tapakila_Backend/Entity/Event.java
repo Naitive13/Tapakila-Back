@@ -1,5 +1,6 @@
 package com.tapakila.Tapakila_Backend.Entity;
 
+import com.tapakila.Tapakila_Backend.Entity.Enum.EventType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
