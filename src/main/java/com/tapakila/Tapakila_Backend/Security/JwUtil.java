@@ -1,6 +1,6 @@
 package com.tapakila.Tapakila_Backend.Security;
 
-import com.tapakila.Tapakila_Backend.Entity.CustomUserDetail;
+import com.tapakila.Tapakila_Backend.Entity.UserVariant.CustomUserDetail;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;

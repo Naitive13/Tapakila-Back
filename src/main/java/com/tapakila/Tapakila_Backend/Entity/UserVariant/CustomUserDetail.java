@@ -1,4 +1,4 @@
-package com.tapakila.Tapakila_Backend.Entity;
+package com.tapakila.Tapakila_Backend.Entity.UserVariant;
 
 import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;

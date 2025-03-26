@@ -1,16 +1,15 @@
 package com.tapakila.Tapakila_Backend.Services;
 
 
-import com.tapakila.Tapakila_Backend.Entity.CustomUserDetail;
+import com.tapakila.Tapakila_Backend.Entity.UserVariant.CustomUserDetail;
 import com.tapakila.Tapakila_Backend.Entity.User;
-import com.tapakila.Tapakila_Backend.Entity.UserType;
+import com.tapakila.Tapakila_Backend.Entity.Enum.UserType;
 import com.tapakila.Tapakila_Backend.Repository.UserDAOImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;

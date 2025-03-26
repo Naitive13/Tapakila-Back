@@ -1,7 +1,7 @@
 package com.tapakila.Tapakila_Backend.Repository;
 
 import com.tapakila.Tapakila_Backend.Entity.User;
-import com.tapakila.Tapakila_Backend.Entity.UserType;
+import com.tapakila.Tapakila_Backend.Entity.Enum.UserType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Repository;
@@ -10,11 +10,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
 
 @Repository
 public class UserDAOImpl implements UserDAO {

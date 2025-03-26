@@ -1,6 +1,8 @@
 package com.tapakila.Tapakila_Backend.Entity;
 
 
+import com.tapakila.Tapakila_Backend.Entity.Enum.ReservationStatus;
+import com.tapakila.Tapakila_Backend.Entity.Enum.TIcketType;
 import lombok.Getter;
 import lombok.Setter;
 

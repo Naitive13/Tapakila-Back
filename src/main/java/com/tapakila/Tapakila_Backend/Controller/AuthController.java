@@ -1,6 +1,11 @@
 package com.tapakila.Tapakila_Backend.Controller;
 
 import com.tapakila.Tapakila_Backend.Entity.*;
+import com.tapakila.Tapakila_Backend.Entity.Enum.UserType;
+import com.tapakila.Tapakila_Backend.Entity.UserVariant.CustomUserDetail;
+import com.tapakila.Tapakila_Backend.Entity.UserVariant.LoginRequest;
+import com.tapakila.Tapakila_Backend.Entity.UserVariant.LoginResponse;
+import com.tapakila.Tapakila_Backend.Entity.UserVariant.SignupRequest;
 import com.tapakila.Tapakila_Backend.Repository.UserDAOImpl;
 import com.tapakila.Tapakila_Backend.Services.CustomUserDetailsService;
 import com.tapakila.Tapakila_Backend.Security.JwUtil;
@@ -10,7 +15,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.Instant;
