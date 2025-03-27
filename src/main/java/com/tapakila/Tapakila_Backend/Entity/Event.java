@@ -17,4 +17,5 @@ public class Event {
     private String eventTitle;
     private EventType eventType;
     private LocalDateTime eventDate;
+    private String eventStatus;
 }
