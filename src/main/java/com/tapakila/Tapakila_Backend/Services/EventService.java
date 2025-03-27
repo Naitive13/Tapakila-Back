@@ -1,5 +1,6 @@
 package com.tapakila.Tapakila_Backend.Services;
 
+import com.tapakila.Tapakila_Backend.Entity.Enum.EventStatus;
 import com.tapakila.Tapakila_Backend.Entity.Event;
 import com.tapakila.Tapakila_Backend.Repository.EventDAO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +29,9 @@ public class EventService {
 
     public Event createEvent(Event event) {
         event.setEventId(UUID.randomUUID().toString()); // UUID generation
+        if (event.getEventStatus() == null) {
+            event.setEventStatus(EventStatus.UPCOMING); // Default Status
+        }
         eventDAO.save(event);
         return event;
     }
@@ -48,5 +52,13 @@ public class EventService {
             throw new RuntimeException("Event with id " + eventId + " not found");
         }
         eventDAO.delete(eventId);
+    }
+
+    public void updateEventStatus(String eventId, String status) {
+        Event existingEvent = eventDAO.getById(eventId);
+        if (existingEvent == null) {
+            throw new RuntimeException("Event with id " + eventId + " not found");
+        }
+        eventDAO.updateStatus(eventId, status);
     }
 }
