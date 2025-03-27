@@ -17,7 +17,7 @@ import java.util.List;
 public class UserDAOImpl implements UserDAO {
 
     private final Datasource datasource;
-    @Autowired
+//    @Autowired
     private PasswordEncoder passwordEncoder;
 
     public UserDAOImpl(Datasource datasource){
