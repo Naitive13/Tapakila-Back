@@ -23,20 +23,45 @@ public class EventDAOImpl implements EventDAO {
     }
 
     @Override
-    public List<Event> getAll() {
+    public List<Event> getAll(String status, String dateFilter) {
         List<Event> events = new ArrayList<>();
-        String sql = "SELECT event_id::TEXT, event_title, event_type, event_date, event_status FROM events";
+        StringBuilder sql =  new StringBuilder("SELECT event_id::TEXT, event_title, event_type, event_date, event_status FROM events WHERE 1=1");
+
+        // Filter by status
+        if (status != null && !status.isEmpty()) {
+            sql.append(" AND event_status = ?::event_status");
+        }
+
+        // Filter by date
+        if (dateFilter != null && !dateFilter.isEmpty()) {
+            switch (dateFilter.toLowerCase()) {
+                case "upcoming":
+                    sql.append(" AND event_date > CURRENT_TIMESTAMP");
+                    break;
+                case "past":
+                    sql.append(" AND event_date < CURRENT_TIMESTAMP");
+                    break;
+                default:
+                    break;
+            }
+        }
+
         try (Connection conn = datasource.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql);
-             ResultSet rs = ps.executeQuery()) {
-            while (rs.next()) {
-                Event event = new Event();
-                event.setEventId(rs.getString("event_id"));
-                event.setEventTitle(rs.getString("event_title"));
-                event.setEventType(EventType.valueOf(rs.getString("event_type")));
-                event.setEventDate(rs.getTimestamp("event_date").toLocalDateTime());
-                event.setEventStatus(EventStatus.valueOf(rs.getString("event_status")));
-                events.add(event);
+             PreparedStatement ps = conn.prepareStatement(sql.toString())) {
+            int paramIndex = 1;
+            if (status != null && !status.isEmpty()) {
+                ps.setString(paramIndex++, status);
+            }
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Event event = new Event();
+                    event.setEventId(rs.getString("event_id"));
+                    event.setEventTitle(rs.getString("event_title"));
+                    event.setEventType(EventType.valueOf(rs.getString("event_type")));
+                    event.setEventDate(rs.getTimestamp("event_date").toLocalDateTime());
+                    event.setEventStatus(EventStatus.valueOf(rs.getString("event_status")));
+                    events.add(event);
+                }
             }
         } catch (SQLException e) {
             throw new RuntimeException("Error while retrieving events",e);
