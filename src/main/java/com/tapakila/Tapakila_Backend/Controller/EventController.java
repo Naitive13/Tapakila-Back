@@ -23,8 +23,10 @@ public class EventController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Event>> getAllEvents() {
-        return ResponseEntity.ok(eventService.getAllEvents());
+    public ResponseEntity<List<Event>> getAllEvents(
+            @RequestParam(value = "status", required = false) String status,
+            @RequestParam(value = "date", required = false) String dateFilter) {
+        return ResponseEntity.ok(eventService.getAllEvents(status, dateFilter));
     }
 
     @GetMapping("/{id}")
@@ -63,17 +65,18 @@ public class EventController {
         eventService.updateEventStatus(eventId, statusRequest.getEventStatus());
         return ResponseEntity.ok().build();
     }
+
+    // Class for status update request
+    class EventStatusRequest {
+        private String eventStatus;
+
+        public String getEventStatus() {
+            return eventStatus;
+        }
+
+        public void setEventStatus(String eventStatus) {
+            this.eventStatus = eventStatus;
+        }
+    }
 }
 
-// Class for status update request
-class EventStatusRequest {
-    private String eventStatus;
-
-    public String getEventStatus() {
-        return eventStatus;
-    }
-
-    public void setEventStatus(String eventStatus) {
-        this.eventStatus = eventStatus;
-    }
-}
