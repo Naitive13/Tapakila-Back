@@ -1,5 +1,6 @@
 package com.tapakila.Tapakila_Backend.Entity;
 
+import com.tapakila.Tapakila_Backend.Entity.Enum.EventStatus;
 import com.tapakila.Tapakila_Backend.Entity.Enum.EventType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -17,5 +18,5 @@ public class Event {
     private String eventTitle;
     private EventType eventType;
     private LocalDateTime eventDate;
-    private String eventStatus;
+    private EventStatus eventStatus;
 }
