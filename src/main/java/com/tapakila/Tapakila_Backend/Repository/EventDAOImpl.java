@@ -111,4 +111,20 @@ public class EventDAOImpl implements EventDAO {
             throw new RuntimeException("Error deleting event", e);
         }
     }
+
+    @Override
+    public void updateStatus(String eventId, String status) {
+        String sql = "UPDATE events SET event_status = ?::event_status WHERE event_id = ?::UUID";
+        try (Connection conn = datasource.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, status);
+            ps.setString(2, eventId);
+            int rowsAffected = ps.executeUpdate();
+            if (rowsAffected == 0) {
+                throw new RuntimeException("Event not found for status update");
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Error updating event status", e);
+        }
+    }
 }

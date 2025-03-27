@@ -12,4 +12,5 @@ public interface EventDAO {
     void save(Event event);
     void update(Event event);
     void delete(String eventId);
+    void updateStatus(String eventId, String status);
 }
