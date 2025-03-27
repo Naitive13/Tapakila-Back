@@ -16,7 +16,6 @@ public class ReservationDAOImpl implements ReservationDAO {
         String sql = """
                 SELECT reservation_id, user_id, ticket_id, reservation_date from reservation_details;
                 """;
-
         List<Reservation> reservationList = new ArrayList<>();
 
         try (Connection connection = datasource.getConnection();
