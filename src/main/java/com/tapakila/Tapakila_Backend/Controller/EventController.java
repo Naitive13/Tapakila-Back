@@ -37,21 +37,21 @@ public class EventController {
     }
 
     @PostMapping
-    @PreAuthorize("hasRole('ROLE_ADMIN')") // Reserved for admins
+    @PreAuthorize("hasRole('ADMIN')") // Reserved for admins
     public ResponseEntity<Event> createEvent(@RequestBody Event event) {
         Event createdEvent = eventService.createEvent(event);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdEvent);
     }
 
     @PostMapping("/{id}")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Event> updateEvent(@PathVariable("id") String eventId, @RequestBody Event event) {
         Event updatedEvent = eventService.updateEvent(eventId, event);
         return ResponseEntity.ok(updatedEvent);
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Event> deleteEvent(@PathVariable("id") String eventId) {
         eventService.deleteEvent(eventId);
         return ResponseEntity.noContent().build();
