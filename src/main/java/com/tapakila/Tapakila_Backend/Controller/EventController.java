@@ -56,4 +56,24 @@ public class EventController {
         eventService.deleteEvent(eventId);
         return ResponseEntity.noContent().build();
     }
+
+    @PutMapping("/{id}/status")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Void> updateEventStatus(@PathVariable("id") String eventId, @RequestBody EventStatusRequest statusRequest) {
+        eventService.updateEventStatus(eventId, statusRequest.getEventStatus());
+        return ResponseEntity.ok().build();
+    }
+}
+
+// Class for status update request
+class EventStatusRequest {
+    private String eventStatus;
+
+    public String getEventStatus() {
+        return eventStatus;
+    }
+
+    public void setEventStatus(String eventStatus) {
+        this.eventStatus = eventStatus;
+    }
 }
