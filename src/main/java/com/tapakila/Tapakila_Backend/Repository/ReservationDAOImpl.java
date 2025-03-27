@@ -30,14 +30,6 @@ public class ReservationDAOImpl implements ReservationDAO {
         return reservationList;
     }
 
-//
-//    CREATE TABLE reservations(
-//            reservation_id UUID PRIMARY KEY ,
-//            event_id UUID references events(event_id) ON DELETE CASCADE,
-//    user_id UUID references users(user_id) ON DELETE CASCADE,
-//    ticket_id UUID references tickets(ticket_id) ON DELETE CASCADE,
-//    reservation_date TIMESTAMP without TIME ZONE
-//);
 
     @Override
     public Reservation createReservation(Reservation toCreate) {
@@ -59,5 +51,25 @@ public class ReservationDAOImpl implements ReservationDAO {
             throw new RuntimeException(e);
         }
         return new Reservation();
+    }
+
+
+    //
+//    CREATE TABLE reservations(
+//            reservation_id UUID PRIMARY KEY ,
+//            event_id UUID references events(event_id) ON DELETE CASCADE,
+//    user_id UUID references users(user_id) ON DELETE CASCADE,
+//    ticket_id UUID references tickets(ticket_id) ON DELETE CASCADE,
+//    reservation_date TIMESTAMP without TIME ZONE
+//);
+    @Override
+    public Reservation update(String reservationId, Reservation toUpdate) {
+        String sql = """
+                UPDATE Reservations() SET 
+                """;
+
+        return new Reservation();
+
+
     }
 }

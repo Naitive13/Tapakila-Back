@@ -8,4 +8,6 @@ public interface ReservationDAO {
     List<Reservation> getAll();
 
     public Reservation createReservation(Reservation toCreate);
+
+    public Reservation update(String reservationId, Reservation toUpdate);
 }
