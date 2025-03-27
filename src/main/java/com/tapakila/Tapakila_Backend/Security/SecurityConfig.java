@@ -32,6 +32,7 @@ public class SecurityConfig {
         http .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/user/me", "/reservation").authenticated()
+                                .requestMatchers("/events/**").hasRole("ADMIN") // Protects all /events endpoints
 //                        .requestMatchers("/user/all").hasRole("ADMIN")
                         .anyRequest().permitAll()
                 )
