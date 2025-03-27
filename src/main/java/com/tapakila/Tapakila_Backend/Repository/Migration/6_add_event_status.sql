@@ -1,7 +1,7 @@
 -- Add ENUM type for event_status
 CREATE TYPE event_status
-    AS ENUM ('To come', 'In progress', 'Past', 'Cancelled');
+    AS ENUM ('UPCOMING', 'ONGOING', 'PAST', 'CANCELLED');
 
 -- Add event_status column to events table
 ALTER TABLE events
-ADD COLUMN event_status event_status DEFAULT 'To come';
+ADD COLUMN event_status event_status DEFAULT 'UPCOMING';
