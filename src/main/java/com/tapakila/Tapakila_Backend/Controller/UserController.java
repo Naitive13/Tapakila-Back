@@ -1,6 +1,8 @@
 package com.tapakila.Tapakila_Backend.Controller;
 
+import com.tapakila.Tapakila_Backend.Entity.Enum.UserType;
 import com.tapakila.Tapakila_Backend.Entity.User;
+import com.tapakila.Tapakila_Backend.Entity.UserVariant.SignupRequest;
 import com.tapakila.Tapakila_Backend.Entity.UserVariant.UpdateRequest;
 import com.tapakila.Tapakila_Backend.Entity.UserVariant.UserDetailResponse;
 import com.tapakila.Tapakila_Backend.Repository.Datasource;
@@ -17,7 +19,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.Instant;
 import java.util.List;
+import java.util.UUID;
 import java.util.logging.Logger;
 
 @RestController
@@ -81,6 +85,38 @@ public class UserController {
             return ResponseEntity.ok(userDAO.getUserByEmail(updateRequest.getEmail()));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(userDAO.getUserByEmail(updateRequest.getEmail()));
+        }
+    }
+
+    @PostMapping("/create")
+    public ResponseEntity<String> createUser(@RequestBody SignupRequest newUser){
+        try {
+            // Check if the email is already registered
+            if (userDAO.existsByUserEmail(newUser.getEmail())) {
+                return ResponseEntity.status(HttpStatus.CONFLICT).body("Email already registered");
+            }
+
+            // Create a new user
+            User user = new User();
+            user.setUserId(UUID.randomUUID().toString());
+            user.setUserName(newUser.getUserName());
+            user.setEmail(newUser.getEmail());
+            user.setPassword(newUser.getPassword()); // Password will be hashed in the repository
+            user.setType(UserType.valueOf(String.valueOf(newUser.getType())));
+            user.setCreationDate(Instant.now());
+
+
+            // Save the user to the database
+            userDAO.save(user);
+
+            // Return a success response
+            return ResponseEntity.status(HttpStatus.CREATED).body("User registered successfully");
+        } catch (Exception e) {
+            // Log the exception for debugging
+            System.out.println(e);
+
+            // Return a detailed error message
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Registration failed: " + e.getMessage());
         }
     }
 }
