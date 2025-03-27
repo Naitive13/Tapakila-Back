@@ -2,7 +2,9 @@ package com.tapakila.Tapakila_Backend.Repository;
 
 import com.tapakila.Tapakila_Backend.Entity.User;
 import com.tapakila.Tapakila_Backend.Entity.Enum.UserType;
+import com.tapakila.Tapakila_Backend.Entity.UserVariant.UpdateRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Repository;
 
@@ -17,12 +19,13 @@ import java.util.List;
 public class UserDAOImpl implements UserDAO {
 
     private final Datasource datasource;
-//    @Autowired
-    private PasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder = new  BCryptPasswordEncoder();
 
-    public UserDAOImpl(Datasource datasource){
+    public UserDAOImpl(Datasource datasource) {
         this.datasource = datasource;
     }
+
+
     @Override
     public boolean existsByUserEmail(String email) {
         String sql = "SELECT COUNT(*) FROM users WHERE user_email = ?";
@@ -91,7 +94,7 @@ public class UserDAOImpl implements UserDAO {
              PreparedStatement preparedStatement = conn.prepareStatement(sql)) {
             ResultSet rs = preparedStatement.executeQuery();
             while (rs.next()) {
-                User user  = new User();
+                User user = new User();
                 user.setUserId(rs.getString("user_id"));
                 user.setUserName(rs.getString("user_name"));
                 user.setEmail(rs.getString("user_email"));
@@ -107,7 +110,7 @@ public class UserDAOImpl implements UserDAO {
 
     @Override
     public void save(User user) {
-        String sql = "INSERT INTO users (user_id, user_name, user_email, user_password, user_type, user_creation_date) VALUES (?, ?, ?, ?, ?::user_type, ?::TIMESTAMP)";
+        String sql = "INSERT INTO users (user_id, user_name, user_email, user_password, user_type, user_creation_date) VALUES (?::UUID, ?, ?, ?, ?::user_type, ?::TIMESTAMP)";
         try (Connection conn = datasource.getConnection();
              PreparedStatement preparedStatement = conn.prepareStatement(sql)) {
             preparedStatement.setObject(1, user.getUserId());
@@ -122,18 +125,39 @@ public class UserDAOImpl implements UserDAO {
             throw new RuntimeException(e);
         }
     }
+    @Override
+    public void updateUser(UpdateRequest userUpdateBody) {
+        String sql =
+                """
+                        UPDATE users SET user_email = ?, user_name=?, user_password=? where user_id = ?::UUID
+                        """;
+        String password = userUpdateBody.getUserPassword();
+        try (Connection connection = datasource.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(sql)
+        ){
+            preparedStatement.setString(1, userUpdateBody.getEmail());
+            preparedStatement.setString(2, userUpdateBody.getUserName());
+            preparedStatement.setString(3, passwordEncoder.encode(password));
+            preparedStatement.setString(4, userUpdateBody.getUserId());
+            preparedStatement.executeUpdate();
+        } catch (SQLException e){
+            throw new RuntimeException(e);
+        }
+    }
+
 
     @Override
     public void delete(String userID) {
         String sql = "DELETE FROM users where user_id = ?::UUID";
 
         try (Connection connection = datasource.getConnection();
-            PreparedStatement preparedStatement = connection.prepareStatement(sql)
-        ){
+             PreparedStatement preparedStatement = connection.prepareStatement(sql)
+        ) {
             preparedStatement.setString(1, userID);
             preparedStatement.executeUpdate();
-        }catch (SQLException e){
+        } catch (SQLException e) {
             throw new RuntimeException(e);
         }
     }
+
 }

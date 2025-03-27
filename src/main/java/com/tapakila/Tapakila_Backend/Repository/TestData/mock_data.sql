@@ -3,7 +3,7 @@ CREATE EXTENSION IF NOT EXISTS pgcrypto;
 
 -- Insert into users table with gen_random_uuid()
 INSERT INTO users (user_id, user_name, user_email, user_password, user_creation_date, user_type) VALUES
-(gen_random_uuid(), 'john_doe', 'john.doe@example.com', 'hashed_password_1', '2023-10-01 12:00:00', 'standard'),
+(gen_random_uuid(), 'taratra', 'taratra.fanoitra@example.com', 'hashed_password_1', '2023-10-01 12:00:00', 'standard'),
 (gen_random_uuid(), 'jane_smith', 'jane.smith@example.com', 'hashed_password_2', '2023-10-02 13:00:00', 'standard'),
 (gen_random_uuid(), 'alice_wang', 'alice.wang@example.com', 'hashed_password_3', '2023-10-03 14:00:00', 'admin'),
 (gen_random_uuid(), 'bob_jones', 'bob.jones@example.com', 'hashed_password_4', '2023-10-04 15:00:00', 'standard'),

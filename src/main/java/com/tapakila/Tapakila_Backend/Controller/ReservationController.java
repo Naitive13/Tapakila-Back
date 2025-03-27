@@ -13,7 +13,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/reservations")
 public class ReservationController {
-    private ReservationDAOImpl reservationDAO = new ReservationDAOImpl();
+    private final ReservationDAOImpl reservationDAO = new ReservationDAOImpl();
 
     @GetMapping("/all")
     @PreAuthorize("hasRole('ADMIN')")

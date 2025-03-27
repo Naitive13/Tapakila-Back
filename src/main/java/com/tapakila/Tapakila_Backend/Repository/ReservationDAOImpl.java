@@ -17,7 +17,6 @@ public class ReservationDAOImpl implements ReservationDAO {
         String sql = """
                 SELECT reservation_id, user_id, ticket_id, reservation_date from reservation_details;
                 """;
-
         List<Reservation> reservationList = new ArrayList<>();
 
         try (Connection connection = datasource.getConnection(); PreparedStatement ps = connection.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
@@ -46,8 +45,7 @@ public class ReservationDAOImpl implements ReservationDAO {
             ps.setTimestamp(4, Timestamp.valueOf(toCreate.getReservationDate()));
 
             ps.executeUpdate();
-        } catch (
-                Exception e) {
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
         return new Reservation();
@@ -65,11 +63,22 @@ public class ReservationDAOImpl implements ReservationDAO {
     @Override
     public Reservation update(String reservationId, Reservation toUpdate) {
         String sql = """
-                UPDATE Reservations() SET 
+                UPDATE Reservations() SET reservation_date = ? WHERE reservation_id = ?
                 """;
 
-        return new Reservation();
+        try (Connection connection = datasource.getConnection(); PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setTimestamp(1, Timestamp.valueOf(toUpdate.getReservationDate()));
+            ps.setString(2, reservationId);
 
+            int affectedRows = ps.executeUpdate();
+            if (affectedRows == 0) {
+                throw new RuntimeException("No reservation with ID : " + reservationId);
+            }
+
+            return toUpdate;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
 
     }
 }
