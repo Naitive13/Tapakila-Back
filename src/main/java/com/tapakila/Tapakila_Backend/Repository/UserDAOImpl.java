@@ -3,7 +3,6 @@ package com.tapakila.Tapakila_Backend.Repository;
 import com.tapakila.Tapakila_Backend.Entity.User;
 import com.tapakila.Tapakila_Backend.Entity.Enum.UserType;
 import com.tapakila.Tapakila_Backend.Entity.UserVariant.UpdateRequest;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Repository;
@@ -87,11 +86,13 @@ public class UserDAOImpl implements UserDAO {
     }
 
     @Override
-    public List<User> getAll() {
+    public List<User> getAll(int pageSize, int pageNumber) {
         List<User> userList = new ArrayList<>();
-        String sql = "SELECT user_id::TEXT AS user_id, user_email, user_name, user_type, user_creation_date FROM users";
+        String sql = "SELECT user_id::TEXT AS user_id, user_email, user_name, user_type, user_creation_date FROM users LIMIT ?  OFFSET ?";
         try (Connection conn = datasource.getConnection();
              PreparedStatement preparedStatement = conn.prepareStatement(sql)) {
+            preparedStatement.setInt(1, pageSize);
+            preparedStatement.setInt(2, (pageNumber * (pageSize - 1)));
             ResultSet rs = preparedStatement.executeQuery();
             while (rs.next()) {
                 User user = new User();

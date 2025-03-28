@@ -5,7 +5,6 @@ import com.tapakila.Tapakila_Backend.Entity.User;
 import com.tapakila.Tapakila_Backend.Entity.UserVariant.SignupRequest;
 import com.tapakila.Tapakila_Backend.Entity.UserVariant.UpdateRequest;
 import com.tapakila.Tapakila_Backend.Entity.UserVariant.UserDetailResponse;
-import com.tapakila.Tapakila_Backend.Repository.Datasource;
 import com.tapakila.Tapakila_Backend.Repository.UserDAOImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -13,7 +12,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -35,8 +33,10 @@ public class UserController {
 
     @GetMapping("/all")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<List<User>> getAll(){
-        List<User> userList = userDAO.getAll();
+    public ResponseEntity<List<User>> getAll(@RequestParam (required = false, defaultValue = "10") int pageSize,
+                                             @RequestParam (required = false, defaultValue = "1") int pageNumber
+                                             ){
+        List<User> userList = userDAO.getAll(pageSize,pageNumber);
         return ResponseEntity.ok(userList);
     }
 
