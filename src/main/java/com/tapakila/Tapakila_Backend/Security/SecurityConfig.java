@@ -31,13 +31,13 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/user/me", "/reservation").authenticated()
-                        .requestMatchers("/events/**").hasRole("ADMIN") // Protects all /events endpoints
+                        .requestMatchers("/user/**", "/reservation").authenticated()
+                        .requestMatchers("/events/**").hasRole("ADMIN") 
                         .requestMatchers("/user/all").hasRole("ADMIN")
                         .anyRequest().permitAll()
                 )
                 .sessionManagement(session -> session
-                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS) // Stateless session management
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS) 
                 );
 
         // Add JWT filter
