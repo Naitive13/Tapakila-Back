@@ -33,7 +33,7 @@ public class SecurityConfig {
         http.csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/user/**", "/reservation").authenticated()
-                        .requestMatchers("/events/**").hasRole("ADMIN") 
+//                        .requestMatchers("/events/**").hasRole("ADMIN")
                         .requestMatchers("/user/all").hasRole("ADMIN")
                         .anyRequest().permitAll()
                 )
