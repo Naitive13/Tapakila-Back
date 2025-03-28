@@ -10,4 +10,9 @@ public interface ReservationDAO {
     public Reservation createReservation(Reservation toCreate);
 
     public Reservation update(String reservationId, Reservation toUpdate);
+
+    public Reservation getReservationById(String id);
+
+    public void deleteReservation(String id);
 }
+
