@@ -6,6 +6,8 @@ import com.tapakila.Tapakila_Backend.Repository.EventDAO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.List;
 import java.util.UUID;
 
@@ -32,6 +34,7 @@ public class EventService {
         if (event.getEventStatus() == null) {
             event.setEventStatus(EventStatus.UPCOMING); // Default Status
         }
+        validateEventPoster(event.getEventPoster());
         eventDAO.save(event);
         return event;
     }
@@ -42,6 +45,7 @@ public class EventService {
             throw new RuntimeException("Event with id " + eventId + " not found");
         }
         event.setEventId(eventId);
+        validateEventPoster(event.getEventPoster());
         eventDAO.update(event);
         return event;
     }
@@ -60,5 +64,15 @@ public class EventService {
             throw new RuntimeException("Event with id " + eventId + " not found");
         }
         eventDAO.updateStatus(eventId, status);
+    }
+
+    private void validateEventPoster(String eventPoster) {
+        if (eventPoster != null && !eventPoster.isEmpty()) {
+            try {
+                new URL(eventPoster); // Checks if it's a valid URL
+            } catch (MalformedURLException e) {
+                throw new RuntimeException("Event image URL is invalid", e);
+            }
+        }
     }
 }

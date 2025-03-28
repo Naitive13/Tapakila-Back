@@ -32,10 +32,12 @@ public class SecurityConfig {
         http.csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/user/**", "/reservation").authenticated()
+                        .requestMatchers("/events/**").hasRole("ADMIN") 
+                        .requestMatchers("/user/all").hasRole("ADMIN")
                         .anyRequest().permitAll()
                 )
                 .sessionManagement(session -> session
-                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS) // Stateless session management
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS) 
                 );
 
         // Add JWT filter
