@@ -9,5 +9,4 @@ class TapakilaBackendApplicationTests {
 	@Test
 	void contextLoads() {
 	}
-
 }

@@ -11,7 +11,7 @@ public interface UserDAO {
     boolean existsByUserEmail(String email);
     User getUserByEmail(String email);
     User getUserByUUID(String UUID);
-    List<User> getAll();
+    List<User> getAll(int pageSize, int pageNumber);
     void save(User user);
     void delete(String userID);
     void updateUser(UpdateRequest userUpdateBody);
