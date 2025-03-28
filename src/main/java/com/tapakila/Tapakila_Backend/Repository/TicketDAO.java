@@ -11,4 +11,7 @@ public interface TicketDAO {
     public List<Ticket> getTicketsList();
 
     public void deleteTicket(String id);
+
+    public Ticket updateTicket(String id, Ticket toUpdate);
+
 }

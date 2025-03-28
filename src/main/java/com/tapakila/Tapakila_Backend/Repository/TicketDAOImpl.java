@@ -94,4 +94,26 @@ public class TicketDAOImpl implements TicketDAO {
             throw new RuntimeException(e);
         }
     }
+
+    @Override
+    public Ticket updateTicket(String id, Ticket toUpdate) {
+        String sql = """
+                UPDATE tickets SET reservation_status = ?, ticket_type = ? WHERE ticket_id = ?
+                """;
+        try (Connection connection = datasource.getConnection(); PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, toUpdate.getReservationStatus().name());
+            ps.setString(2, toUpdate.getTicketType().name());
+            ps.setString(3, id);
+
+
+            int rowsUpdated = ps.executeUpdate();
+            if (rowsUpdated == 0) {
+                throw new RuntimeException("No ticket found with the ID: " + id);
+            }
+
+            return toUpdate;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
 }
