@@ -9,4 +9,6 @@ public interface TicketDAO {
     public Ticket createTicket(Ticket toCreate);
 
     public List<Ticket> getTicketsList();
+
+    public void deleteTicket(String id);
 }

@@ -38,8 +38,7 @@ public class TicketDAOImpl implements TicketDAO {
                 VALUES(?, ?, ?::reservation_status, ?::ticket_type)
                 """;
 
-        try (Connection connection = datasource.getConnection();
-             PreparedStatement ps = connection.prepareStatement(sql)) {
+        try (Connection connection = datasource.getConnection(); PreparedStatement ps = connection.prepareStatement(sql)) {
 
             ps.setString(1, toCreate.getTicket_id());
             ps.setString(2, toCreate.getEvent_id());
@@ -68,12 +67,7 @@ public class TicketDAOImpl implements TicketDAO {
 
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
-                    ticketList.add(new Ticket(
-                            rs.getString("ticket_id"),
-                            rs.getString("event_id"),
-                            ReservationStatus.valueOf(rs.getString("reservation_status")),
-                            TicketType.valueOf(rs.getString("ticket_type"))
-                    ));
+                    ticketList.add(new Ticket(rs.getString("ticket_id"), rs.getString("event_id"), ReservationStatus.valueOf(rs.getString("reservation_status")), TicketType.valueOf(rs.getString("ticket_type"))));
                 }
             }
         } catch (Exception e) {
@@ -81,5 +75,23 @@ public class TicketDAOImpl implements TicketDAO {
         }
 
         return ticketList;
+    }
+
+    @Override
+    public void deleteTicket(String id) {
+        String sql = """
+                    DELETE FROM tickets WHERE ticket_id = ?
+                """;
+
+        try (Connection connection = datasource.getConnection(); PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, id);
+
+            int rowsDeleted = ps.executeUpdate();
+            if (rowsDeleted == 0) {
+                throw new RuntimeException("No ticket found with the ID: " + id);
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 }
