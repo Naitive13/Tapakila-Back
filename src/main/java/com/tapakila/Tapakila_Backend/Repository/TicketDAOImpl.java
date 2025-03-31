@@ -3,6 +3,7 @@ package com.tapakila.Tapakila_Backend.Repository;
 import com.tapakila.Tapakila_Backend.Entity.Enum.ReservationStatus;
 import com.tapakila.Tapakila_Backend.Entity.Enum.TicketType;
 import com.tapakila.Tapakila_Backend.Entity.Ticket;
+import org.springframework.stereotype.Component;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -10,6 +11,7 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 
+@Component
 public class TicketDAOImpl implements TicketDAO {
     private final Datasource datasource;
 
@@ -115,5 +117,30 @@ public class TicketDAOImpl implements TicketDAO {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @Override
+    public Ticket getTicketsById(String ticketID) {
+        String sql = """
+                                    SELECT ticket_id, event_id, reservation_status, ticket_type FROM tickets 
+                WHERE ticket_id = ?
+                
+                """;
+        try (Connection connection = datasource.getConnection(); PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, ticketID);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return new Ticket(
+                            rs.getString("ticket_id"),
+                            rs.getString("event_id"),
+                            ReservationStatus.valueOf(rs.getString("reservation_status")),
+                            TicketType.valueOf(rs.getString("ticket_type"))
+                    );
+                }
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Error retrieving ticket list: ", e);
+        }
+        return null;
     }
 }
