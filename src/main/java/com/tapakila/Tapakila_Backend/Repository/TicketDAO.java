@@ -14,4 +14,6 @@ public interface TicketDAO {
 
     public Ticket updateTicket(String id, Ticket toUpdate);
 
+    public Ticket getTicketsById(String ticketID);
+
 }
