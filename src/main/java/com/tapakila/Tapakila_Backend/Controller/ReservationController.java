@@ -2,6 +2,7 @@ package com.tapakila.Tapakila_Backend.Controller;
 
 import com.tapakila.Tapakila_Backend.Entity.Reservation;
 import com.tapakila.Tapakila_Backend.Repository.ReservationDAOImpl;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -11,7 +12,9 @@ import java.util.List;
 @RestController
 @RequestMapping("/reservations")
 public class ReservationController {
-    private final ReservationDAOImpl reservationDAO = new ReservationDAOImpl();
+
+    @Autowired
+    private ReservationDAOImpl reservationDAO;
 
     // Get all reservations (Only accessible by ADMIN)
     @GetMapping("/all")

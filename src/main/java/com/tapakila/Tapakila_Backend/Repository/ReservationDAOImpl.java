@@ -1,6 +1,9 @@
 package com.tapakila.Tapakila_Backend.Repository;
 
 import com.tapakila.Tapakila_Backend.Entity.Reservation;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -8,15 +11,20 @@ import java.sql.ResultSet;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
+
+@Repository
 public class ReservationDAOImpl implements ReservationDAO {
+
+    @Autowired
     private Datasource datasource;
 
 
     @Override
     public List<Reservation> getAll() {
         String sql = """
-                SELECT reservation_id, user_id, ticket_id, reservation_date from reservation_details;
+                SELECT reservation_id, user_id, ticket_id, reservation_date from reservation_details
                 """;
         List<Reservation> reservationList = new ArrayList<>();
 
@@ -35,14 +43,20 @@ public class ReservationDAOImpl implements ReservationDAO {
 
     @Override
     public Reservation createReservation(Reservation toCreate) {
-
         String sql = """
                 INSERT INTO reservations(reservation_id, user_id, ticket_id, reservation_date) 
-                VALUES(?, ?, ?, ?)
+                VALUES(?::UUID, ?::UUID, ?::UUID, ?)
                 """;
 
         try (Connection connection = datasource.getConnection(); PreparedStatement ps = connection.prepareStatement(sql)) {
-            ps.setString(1, toCreate.getReservationID());
+            // Generate UUID if not already set
+            String reservationId = toCreate.getReservationID();
+            if (reservationId == null || reservationId.isEmpty()) {
+                reservationId = UUID.randomUUID().toString();
+                toCreate.setReservationID(reservationId);
+            }
+
+            ps.setString(1, reservationId);
             ps.setString(2, toCreate.getUserID());
             ps.setString(3, toCreate.getTicketID());
             ps.setTimestamp(4, Timestamp.valueOf(toCreate.getReservationDate()));
@@ -56,13 +70,13 @@ public class ReservationDAOImpl implements ReservationDAO {
 
 
     //
-//    CREATE TABLE reservations(
-//            reservation_id UUID PRIMARY KEY ,
-//            event_id UUID references events(event_id) ON DELETE CASCADE,
-//    user_id UUID references users(user_id) ON DELETE CASCADE,
-//    ticket_id UUID references tickets(ticket_id) ON DELETE CASCADE,
-//    reservation_date TIMESTAMP without TIME ZONE
-//);
+    //    CREATE TABLE reservations(
+    //            reservation_id UUID PRIMARY KEY ,
+    //            event_id UUID references events(event_id) ON DELETE CASCADE,
+    //    user_id UUID references users(user_id) ON DELETE CASCADE,
+    //    ticket_id UUID references tickets(ticket_id) ON DELETE CASCADE,
+    //    reservation_date TIMESTAMP without TIME ZONE
+    //);
     @Override
     public Reservation update(String reservationId, Reservation toUpdate) {
         String sql = """
@@ -87,7 +101,7 @@ public class ReservationDAOImpl implements ReservationDAO {
     @Override
     public Reservation getReservationById(String id) {
         String sql = """
-                SELECT reservation_id, user_id, ticket_id, reservation_date from reservation_details WHERE reservation_id = ?;
+                SELECT reservation_id, user_id, ticket_id, reservation_date from reservation_details WHERE reservation_id = ?::UUID;
                 """;
         try (Connection connection = datasource.getConnection(); PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setString(1, id);
