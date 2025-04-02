@@ -10,6 +10,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Component
 public class TicketDAOImpl implements TicketDAO {
@@ -37,12 +38,17 @@ public class TicketDAOImpl implements TicketDAO {
     public Ticket createTicket(Ticket toCreate) {
         String sql = """
                 INSERT INTO tickets(ticket_id, event_id, reservation_status, ticket_type) 
-                VALUES(?, ?, ?::reservation_status, ?::ticket_type)
+                VALUES(?::UUID, ?::UUID, ?::reservation_status, ?::ticket_type)
                 """;
 
         try (Connection connection = datasource.getConnection(); PreparedStatement ps = connection.prepareStatement(sql)) {
+            String ticketId = toCreate.getTicket_id();
+            if (ticketId == null || ticketId.isEmpty()) {
+                ticketId = UUID.randomUUID().toString();
+                toCreate.setTicket_id(ticketId);
+            }
 
-            ps.setString(1, toCreate.getTicket_id());
+            ps.setString(1, ticketId);
             ps.setString(2, toCreate.getEvent_id());
             ps.setString(3, toCreate.getReservationStatus().name());
             ps.setString(4, toCreate.getTicketType().name());
@@ -57,6 +63,7 @@ public class TicketDAOImpl implements TicketDAO {
             throw new RuntimeException("Error while creating ticket T _ T", e);
         }
     }
+
 
     @Override
     public List<Ticket> getTicketsList() {
