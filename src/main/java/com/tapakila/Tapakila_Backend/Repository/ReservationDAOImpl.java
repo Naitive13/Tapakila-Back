@@ -1,6 +1,10 @@
 package com.tapakila.Tapakila_Backend.Repository;
 
+import com.tapakila.Tapakila_Backend.Entity.Enum.ReservationStatus;
+import com.tapakila.Tapakila_Backend.Entity.Enum.TicketType;
+import com.tapakila.Tapakila_Backend.Entity.InsertReservationAndTicket;
 import com.tapakila.Tapakila_Backend.Entity.Reservation;
+import com.tapakila.Tapakila_Backend.Entity.Ticket;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
@@ -9,6 +13,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -20,6 +25,12 @@ public class ReservationDAOImpl implements ReservationDAO {
     @Autowired
     private Datasource datasource;
 
+    @Autowired
+    private ReservationDAO reservationDAO;
+
+    @Autowired
+    private TicketDAO ticketDAO;
+
 
     @Override
     public List<Reservation> getAll() {
@@ -30,9 +41,7 @@ public class ReservationDAOImpl implements ReservationDAO {
 
         try (Connection connection = datasource.getConnection(); PreparedStatement ps = connection.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
-                reservationList.add(new Reservation(rs.getString("reservation_id"),
-                        rs.getString("user_id"), rs.getString("ticket_id"),
-                        rs.getTimestamp("reservation_date").toLocalDateTime()));
+                reservationList.add(new Reservation(rs.getString("reservation_id"), rs.getString("user_id"), rs.getString("ticket_id"), rs.getTimestamp("reservation_date").toLocalDateTime()));
             }
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -49,7 +58,6 @@ public class ReservationDAOImpl implements ReservationDAO {
                 """;
 
         try (Connection connection = datasource.getConnection(); PreparedStatement ps = connection.prepareStatement(sql)) {
-            // Generate UUID if not already set
             String reservationId = toCreate.getReservationID();
             if (reservationId == null || reservationId.isEmpty()) {
                 reservationId = UUID.randomUUID().toString();
@@ -59,7 +67,7 @@ public class ReservationDAOImpl implements ReservationDAO {
             ps.setString(1, reservationId);
             ps.setString(2, toCreate.getUserID());
             ps.setString(3, toCreate.getTicketID());
-            ps.setTimestamp(4, Timestamp.valueOf(toCreate.getReservationDate()));
+            ps.setTimestamp(4, Timestamp.valueOf(LocalDateTime.now()));
 
             ps.executeUpdate();
         } catch (Exception e) {
@@ -108,11 +116,7 @@ public class ReservationDAOImpl implements ReservationDAO {
 
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
-                    return new Reservation(
-                            rs.getString("reservation_id"),
-                            rs.getString("user_id"),
-                            rs.getString("ticket_id"),
-                            rs.getTimestamp("reservation_date").toLocalDateTime());
+                    return new Reservation(rs.getString("reservation_id"), rs.getString("user_id"), rs.getString("ticket_id"), rs.getTimestamp("reservation_date").toLocalDateTime());
                 }
             }
 
@@ -135,9 +139,28 @@ public class ReservationDAOImpl implements ReservationDAO {
             if (rowsDeleted == 0) {
                 throw new RuntimeException("No reservation found with the ID: " + id);
             }
-        } catch (
-                Exception e) {
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+
+    @Override
+    public InsertReservationAndTicket createReservationAndTicket(InsertReservationAndTicket toCreate) {
+        reservationDAO.createReservation(new Reservation(
+                toCreate.getReservationID(),
+                toCreate.getTicket_id(),
+                toCreate.getUserID(),
+                toCreate.getReservationDate()
+        ));
+
+        ticketDAO.createTicket(new Ticket(
+                toCreate.getTicket_id(),
+                toCreate.getEvent_id(),
+                toCreate.getReservationStatus(),
+                toCreate.getTicketType()
+        ));
+
+        return toCreate;
     }
 }
