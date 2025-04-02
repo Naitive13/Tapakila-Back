@@ -26,9 +26,6 @@ public class ReservationDAOImpl implements ReservationDAO {
     private Datasource datasource;
 
     @Autowired
-    private ReservationDAO reservationDAO;
-
-    @Autowired
     private TicketDAO ticketDAO;
 
 
@@ -147,7 +144,7 @@ public class ReservationDAOImpl implements ReservationDAO {
 
     @Override
     public InsertReservationAndTicket createReservationAndTicket(InsertReservationAndTicket toCreate) {
-        reservationDAO.createReservation(new Reservation(
+        this.createReservation(new Reservation(
                 toCreate.getReservationID(),
                 toCreate.getTicket_id(),
                 toCreate.getUserID(),
