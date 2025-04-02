@@ -46,6 +46,27 @@ public class ReservationDAOImpl implements ReservationDAO {
         return reservationList;
     }
 
+    @Override
+    public List<Reservation> getByUserId(String userId) {
+        String sql = """
+                SELECT reservation_id, user_id, ticket_id, reservation_date from reservation_details where user_id = ?::UUID
+                """;
+        List<Reservation> reservationList = new ArrayList<>();
+
+        try (Connection connection = datasource.getConnection(); PreparedStatement ps = connection.prepareStatement(sql);) {
+            ps.setString(1, userId);
+            try ( ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    reservationList.add(new Reservation(rs.getString("reservation_id"), rs.getString("user_id"), rs.getString("ticket_id"), rs.getTimestamp("reservation_date").toLocalDateTime()));
+                }
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        return reservationList;
+
+    }
+
 
     @Override
     public Reservation createReservation(Reservation toCreate) {
@@ -128,7 +149,7 @@ public class ReservationDAOImpl implements ReservationDAO {
         String sql = """
                 DELETE FROM Reservations WHERE reservation_id = ?
                 """;
-
+        Reservation reservation = getReservationById(id);
         try (Connection connection = datasource.getConnection(); PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setString(1, id);
 
@@ -139,6 +160,7 @@ public class ReservationDAOImpl implements ReservationDAO {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+        ticketDAO.updateTicketStatus(reservation.getTicketID(), ReservationStatus.available);
     }
 
 

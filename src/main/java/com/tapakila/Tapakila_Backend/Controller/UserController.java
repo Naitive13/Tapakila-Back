@@ -1,10 +1,12 @@
 package com.tapakila.Tapakila_Backend.Controller;
 
 import com.tapakila.Tapakila_Backend.Entity.Enum.UserType;
+import com.tapakila.Tapakila_Backend.Entity.Reservation;
 import com.tapakila.Tapakila_Backend.Entity.User;
 import com.tapakila.Tapakila_Backend.Entity.UserVariant.SignupRequest;
 import com.tapakila.Tapakila_Backend.Entity.UserVariant.UpdateRequest;
 import com.tapakila.Tapakila_Backend.Entity.UserVariant.UserDetailResponse;
+import com.tapakila.Tapakila_Backend.Repository.ReservationDAOImpl;
 import com.tapakila.Tapakila_Backend.Repository.UserDAOImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -21,20 +23,21 @@ import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 import java.util.logging.Logger;
+
 @CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/user")
 public class UserController {
-    private Logger logger   = Logger.getLogger(UserController.class.getName());
-
     @Autowired
     private UserDAOImpl userDAO;
+    @Autowired
+    ReservationDAOImpl reservationDAO;
 
     @GetMapping("/all")
-    public ResponseEntity<List<User>> getAll(@RequestParam (required = false, defaultValue = "10") int pageSize,
-                                             @RequestParam (required = false, defaultValue = "1") int pageNumber
-                                             ){
-        List<User> userList = userDAO.getAll(pageSize,pageNumber);
+    public ResponseEntity<List<User>> getAll(@RequestParam(required = false, defaultValue = "10") int pageSize,
+                                             @RequestParam(required = false, defaultValue = "1") int pageNumber
+    ) {
+        List<User> userList = userDAO.getAll(pageSize, pageNumber);
         return ResponseEntity.ok(userList);
     }
 
@@ -53,6 +56,16 @@ public class UserController {
 
         return ResponseEntity.ok(userDetail);
     }
+
+    @GetMapping("/me/reservation")
+    public ResponseEntity<List<Reservation>> getCurrentUserReservation() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+
+        User user = userDAO.getUserByEmail(email);
+        return ResponseEntity.ok(reservationDAO.getByUserId(user.getUserId()));
+    }
+
     @RequestMapping("/{userID}")
     public ResponseEntity<UserDetailResponse> getUserByID(@PathVariable String userID) {
         User user = userDAO.getUserByUUID(userID);
@@ -67,7 +80,7 @@ public class UserController {
     }
 
     @DeleteMapping("/{userId}")
-    public ResponseEntity<String>  deleteUser(@PathVariable String userId){
+    public ResponseEntity<String> deleteUser(@PathVariable String userId) {
         try {
             userDAO.delete(userId);
             return ResponseEntity.ok("user : " + userId + " has been deleted successfully.");
@@ -77,7 +90,7 @@ public class UserController {
     }
 
     @PutMapping("/me")
-    public ResponseEntity<User> updateUserInfo(@RequestBody UpdateRequest updateRequest){
+    public ResponseEntity<User> updateUserInfo(@RequestBody UpdateRequest updateRequest) {
         try {
             userDAO.updateUser(updateRequest);
             return ResponseEntity.ok(userDAO.getUserByEmail(updateRequest.getEmail()));
@@ -87,7 +100,7 @@ public class UserController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<String> createUser(@RequestBody SignupRequest newUser){
+    public ResponseEntity<String> createUser(@RequestBody SignupRequest newUser) {
         try {
             // Check if the email is already registered
             if (userDAO.existsByUserEmail(newUser.getEmail())) {

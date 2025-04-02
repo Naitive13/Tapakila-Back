@@ -8,6 +8,8 @@ import java.util.List;
 public interface ReservationDAO {
     List<Reservation> getAll();
 
+    List<Reservation> getByUserId(String userId);
+
     public Reservation createReservation(Reservation toCreate);
 
     public Reservation update(String reservationId, Reservation toUpdate);
