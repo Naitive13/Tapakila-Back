@@ -13,7 +13,7 @@ FROM
 JOIN
     tickets t ON r.ticket_id = t.ticket_id
 JOIN
-    events e ON r.event_id = e.event_id
+    events e ON t.event_id = e.event_id
 JOIN
     users u ON r.user_id = u.user_id;
 
