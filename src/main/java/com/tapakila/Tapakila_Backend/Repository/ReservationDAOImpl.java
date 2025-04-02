@@ -16,6 +16,7 @@ import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.UUID;
 
 
@@ -145,7 +146,7 @@ public class ReservationDAOImpl implements ReservationDAO {
     @Override
     public InsertReservationAndTicket createReservationAndTicket(InsertReservationAndTicket toCreate) {
         Ticket availableTicket =
-                ticketDAO.getTicketsList().stream().filter(ticket -> (ticket.getReservationStatus() == ReservationStatus.available && ticket.getTicketType() == toCreate.getTicketType())).findFirst().get();
+                ticketDAO.getTicketsList().stream().filter(ticket -> (ticket.getReservationStatus() == ReservationStatus.available && ticket.getTicketType() == toCreate.getTicketType())).findFirst().orElseThrow(() -> new NoSuchElementException("No available ticket found for the requested type"));
 
         this.createReservation(new Reservation(
                 UUID.randomUUID().toString(),
@@ -153,6 +154,7 @@ public class ReservationDAOImpl implements ReservationDAO {
                 toCreate.getUserID(),
                 toCreate.getReservationDate()
         ));
+
         ticketDAO.updateTicketStatus(availableTicket.getTicket_id(), ReservationStatus.reserved);
 
         return toCreate;
