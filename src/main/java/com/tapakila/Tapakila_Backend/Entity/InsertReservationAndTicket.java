@@ -10,10 +10,8 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 public class InsertReservationAndTicket {
-    private String reservationID;
     private String userID;
     private LocalDateTime reservationDate;
-    private String ticket_id;
     private String event_id;
     private ReservationStatus reservationStatus;
     private TicketType ticketType;
