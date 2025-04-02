@@ -21,9 +21,8 @@ import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 import java.util.logging.Logger;
-
+@CrossOrigin(origins = "*")
 @RestController
-//@CrossOrigin(origins = "http://localhost:5173/")
 @RequestMapping("/user")
 public class UserController {
     private Logger logger   = Logger.getLogger(UserController.class.getName());
@@ -32,7 +31,6 @@ public class UserController {
     private UserDAOImpl userDAO;
 
     @GetMapping("/all")
-    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<User>> getAll(@RequestParam (required = false, defaultValue = "10") int pageSize,
                                              @RequestParam (required = false, defaultValue = "1") int pageNumber
                                              ){

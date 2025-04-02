@@ -88,11 +88,11 @@ public class UserDAOImpl implements UserDAO {
     @Override
     public List<User> getAll(int pageSize, int pageNumber) {
         List<User> userList = new ArrayList<>();
-        String sql = "SELECT user_id::TEXT AS user_id, user_email, user_name, user_type, user_creation_date FROM users LIMIT ?  OFFSET ?";
+        String sql = "SELECT user_id::TEXT AS user_id, user_email, user_name, user_type, user_creation_date FROM users LIMIT ? OFFSET ?";
         try (Connection conn = datasource.getConnection();
              PreparedStatement preparedStatement = conn.prepareStatement(sql)) {
             preparedStatement.setInt(1, pageSize);
-            preparedStatement.setInt(2, (pageNumber * (pageSize - 1)));
+            preparedStatement.setInt(2, ((pageNumber - 1) * pageSize));
             ResultSet rs = preparedStatement.executeQuery();
             while (rs.next()) {
                 User user = new User();
