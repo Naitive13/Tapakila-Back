@@ -50,7 +50,7 @@ public class TicketDAOImpl implements TicketDAO {
 
             ps.setString(1, ticketId);
             ps.setString(2, toCreate.getEvent_id());
-            ps.setString(3, toCreate.getReservationStatus().name());
+            ps.setString(3, ReservationStatus.available.name());
             ps.setString(4, toCreate.getTicketType().name());
 
             int rowsInserted = ps.executeUpdate();
@@ -129,7 +129,7 @@ public class TicketDAOImpl implements TicketDAO {
     @Override
     public String updateTicketStatus(String id, ReservationStatus status) {
         String sql = """
-                UPDATE tickets SET reservation_status = ?::reservation_status WHERE ticket_id = ?
+                UPDATE tickets SET reservation_status = ?::reservation_status WHERE ticket_id = ?::UUID
                 """;
         try (Connection connection = datasource.getConnection(); PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setString(1, status.toString());
@@ -159,12 +159,7 @@ public class TicketDAOImpl implements TicketDAO {
             ps.setString(1, ticketID);
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
-                    return new Ticket(
-                            rs.getString("ticket_id"),
-                            rs.getString("event_id"),
-                            ReservationStatus.valueOf(rs.getString("reservation_status")),
-                            TicketType.valueOf(rs.getString("ticket_type"))
-                    );
+                    return new Ticket(rs.getString("ticket_id"), rs.getString("event_id"), ReservationStatus.valueOf(rs.getString("reservation_status")), TicketType.valueOf(rs.getString("ticket_type")));
                 }
             }
         } catch (Exception e) {

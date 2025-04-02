@@ -145,13 +145,16 @@ public class ReservationDAOImpl implements ReservationDAO {
     @Override
     public InsertReservationAndTicket createReservationAndTicket(InsertReservationAndTicket toCreate) {
         Ticket availableTicket =
-                ticketDAO.getTicketsList().stream().filter(ticket -> (ticket.getReservationStatus() == ReservationStatus.available && ticket.getTicketType() == toCreate.getTicketType())).findFirst().get();
+                ticketDAO.getTicketsList().stream()
+                        .filter(ticket ->
+                                (ticket.getReservationStatus().equals(ReservationStatus.available) && ticket.getTicketType().equals(toCreate.getTicketType())))
+                        .toList().getFirst();
 
         this.createReservation(new Reservation(
                 UUID.randomUUID().toString(),
                 availableTicket.getTicket_id(),
                 toCreate.getUserID(),
-                toCreate.getReservationDate()
+                LocalDateTime.now()
         ));
         ticketDAO.updateTicketStatus(availableTicket.getTicket_id(), ReservationStatus.reserved);
 
