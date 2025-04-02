@@ -1,6 +1,8 @@
 package com.tapakila.Tapakila_Backend.Controller;
 
+import com.tapakila.Tapakila_Backend.Entity.InsertReservationAndTicket;
 import com.tapakila.Tapakila_Backend.Entity.Reservation;
+import com.tapakila.Tapakila_Backend.Repository.ReservationDAO;
 import com.tapakila.Tapakila_Backend.Repository.ReservationDAOImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -14,7 +16,7 @@ import java.util.List;
 public class ReservationController {
 
     @Autowired
-    private ReservationDAOImpl reservationDAO;
+    private ReservationDAO reservationDAO;
 
     // Get all reservations (Only accessible by ADMIN)
     @GetMapping("/all")
@@ -37,6 +39,13 @@ public class ReservationController {
     @PreAuthorize("hasRole('STANDARD')")
     public ResponseEntity<Reservation> createReservation(@RequestBody Reservation toCreate) {
         Reservation reservation = reservationDAO.createReservation(toCreate);
+        return ResponseEntity.ok(reservation);
+    }
+
+    @PostMapping("/create")
+    @PreAuthorize("hasRole('STANDARD')")
+    public ResponseEntity<InsertReservationAndTicket> createReservation(@RequestBody InsertReservationAndTicket toCreate) {
+        InsertReservationAndTicket reservation = reservationDAO.createReservationAndTicket(toCreate);
         return ResponseEntity.ok(reservation);
     }
 
