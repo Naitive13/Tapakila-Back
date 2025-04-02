@@ -127,6 +127,28 @@ public class TicketDAOImpl implements TicketDAO {
     }
 
     @Override
+    public String updateTicketStatus(String id, ReservationStatus status) {
+        String sql = """
+                UPDATE tickets SET reservation_status = ?::reservation_status WHERE ticket_id = ?
+                """;
+        try (Connection connection = datasource.getConnection(); PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, status.toString());
+            ps.setString(2, id);
+
+
+            int rowsUpdated = ps.executeUpdate();
+            if (rowsUpdated == 0) {
+                throw new RuntimeException("No ticket found with the ID: " + id);
+            }
+
+            return "Ticked " + id + "has been reserved";
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+
+        }
+    }
+
+    @Override
     public Ticket getTicketsById(String ticketID) {
         String sql = """
                                     SELECT ticket_id, event_id, reservation_status, ticket_type FROM tickets 
