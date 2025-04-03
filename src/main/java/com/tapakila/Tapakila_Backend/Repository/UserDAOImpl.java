@@ -152,16 +152,14 @@ public class UserDAOImpl implements UserDAO {
         else {
             String sql =
                     """
-                   UPDATE users SET user_email = ?, user_name=?, user_password=? where user_id = ?::UUID
+                   UPDATE users SET user_password=? where user_id = ?::UUID
                    """;
             String password = userUpdateBody.getUserPassword();
             try (Connection connection = datasource.getConnection();
                  PreparedStatement preparedStatement = connection.prepareStatement(sql)
             ){
-                preparedStatement.setString(1, userUpdateBody.getEmail());
-                preparedStatement.setString(2, userUpdateBody.getUserName());
-                preparedStatement.setString(3, passwordEncoder.encode(password));
-                preparedStatement.setString(4, userUpdateBody.getUserId());
+                preparedStatement.setString(1, passwordEncoder.encode(password));
+                preparedStatement.setString(2, userUpdateBody.getUserId());
                 preparedStatement.executeUpdate();
 
             } catch (SQLException e){
