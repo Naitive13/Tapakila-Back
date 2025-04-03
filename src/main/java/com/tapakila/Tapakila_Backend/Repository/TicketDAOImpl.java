@@ -167,4 +167,26 @@ public class TicketDAOImpl implements TicketDAO {
         }
         return null;
     }
+
+    @Override
+    public Integer countAvailableTicket(TicketType ticketType) {
+        String sql = """
+                    SELECT COUNT(*) FROM tickets WHERE ticket_type = ?::ticket_type AND reservation_status = 'available'
+                """;
+
+        try (Connection connection = datasource.getConnection(); PreparedStatement ps = connection.prepareStatement(sql)) {
+
+            ps.setString(1, ticketType.name());
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1);
+                }
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Error counting available tickets", e);
+        }
+
+        return 0;
+    }
 }
