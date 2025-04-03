@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.logging.Logger;
 
@@ -100,7 +101,7 @@ public class UserController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<String> createUser(@RequestBody SignupRequest newUser) {
+    public ResponseEntity<Object> createUser(@RequestBody SignupRequest newUser) {
         try {
             // Check if the email is already registered
             if (userDAO.existsByUserEmail(newUser.getEmail())) {
@@ -121,7 +122,7 @@ public class UserController {
             userDAO.save(user);
 
             // Return a success response
-            return ResponseEntity.status(HttpStatus.CREATED).body("User registered successfully");
+            return ResponseEntity.status(HttpStatus.CREATED).body(user);
         } catch (Exception e) {
             // Log the exception for debugging
             System.out.println(e);
