@@ -1,5 +1,6 @@
 package com.tapakila.Tapakila_Backend.Controller;
 
+import com.tapakila.Tapakila_Backend.Entity.Enum.TicketType;
 import com.tapakila.Tapakila_Backend.Entity.Ticket;
 import com.tapakila.Tapakila_Backend.Repository.TicketDAO;
 import com.tapakila.Tapakila_Backend.Repository.TicketDAOImpl;
@@ -42,5 +43,10 @@ public class TicketController {
     public ResponseEntity<Void> deleteTicket(@PathVariable String ticketId) {
         ticketDAO.deleteTicket(ticketId);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/count")
+    public ResponseEntity<Integer> getTicketCount(@RequestParam TicketType ticketType) {
+        return ResponseEntity.ok(ticketDAO.countAvailableTicket(ticketType));
     }
 }
