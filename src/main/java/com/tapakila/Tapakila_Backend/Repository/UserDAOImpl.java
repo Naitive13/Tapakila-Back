@@ -128,9 +128,11 @@ public class UserDAOImpl implements UserDAO {
     }
     @Override
     public void updateUser(UpdateRequest userUpdateBody) {
+        // update username and email only
+        if (userUpdateBody.getUserPassword() == null){
         String sql =
                 """
-                        UPDATE users SET user_email = ?, user_name=?, user_password=? where user_id = ?::UUID
+                        UPDATE users SET user_email = ?, user_name=? where user_id = ?::UUID
                         """;
         String password = userUpdateBody.getUserPassword();
         try (Connection connection = datasource.getConnection();
@@ -138,11 +140,33 @@ public class UserDAOImpl implements UserDAO {
         ){
             preparedStatement.setString(1, userUpdateBody.getEmail());
             preparedStatement.setString(2, userUpdateBody.getUserName());
-            preparedStatement.setString(3, passwordEncoder.encode(password));
-            preparedStatement.setString(4, userUpdateBody.getUserId());
+            preparedStatement.setString(3, userUpdateBody.getUserId());
             preparedStatement.executeUpdate();
+
         } catch (SQLException e){
             throw new RuntimeException(e);
+        }
+
+        // update password only
+        }
+        else {
+            String sql =
+                    """
+                   UPDATE users SET user_email = ?, user_name=?, user_password=? where user_id = ?::UUID
+                   """;
+            String password = userUpdateBody.getUserPassword();
+            try (Connection connection = datasource.getConnection();
+                 PreparedStatement preparedStatement = connection.prepareStatement(sql)
+            ){
+                preparedStatement.setString(1, userUpdateBody.getEmail());
+                preparedStatement.setString(2, userUpdateBody.getUserName());
+                preparedStatement.setString(3, passwordEncoder.encode(password));
+                preparedStatement.setString(4, userUpdateBody.getUserId());
+                preparedStatement.executeUpdate();
+
+            } catch (SQLException e){
+                throw new RuntimeException(e);
+            }
         }
     }
 
