@@ -25,8 +25,10 @@ public class EventController {
     @GetMapping
     public ResponseEntity<List<Event>> getAllEvents(
             @RequestParam(value = "status", required = false) String status,
-            @RequestParam(value = "date", required = false) String dateFilter) {
-        return ResponseEntity.ok(eventService.getAllEvents(status, dateFilter));
+            @RequestParam(value = "date", required = false) String dateFilter,
+            @RequestParam(value = "title", required = false) String title
+    ) {
+        return ResponseEntity.ok(eventService.getAllEvents(status, dateFilter, title));
     }
 
     @GetMapping("/{id}")

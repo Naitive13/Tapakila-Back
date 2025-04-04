@@ -7,7 +7,7 @@ import java.util.List;
 
 @Repository
 public interface EventDAO {
-    List<Event> getAll(String status, String dateFilter);
+    List<Event> getAll(String status, String dateFilter, String name);
     Event getById(String eventId);
     void save(Event event);
     void update(Event event);

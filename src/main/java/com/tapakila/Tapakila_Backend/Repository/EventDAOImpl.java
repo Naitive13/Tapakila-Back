@@ -23,13 +23,17 @@ public class EventDAOImpl implements EventDAO {
     }
 
     @Override
-    public List<Event> getAll(String status, String dateFilter) {
+    public List<Event> getAll(String status, String dateFilter, String name) {
         List<Event> events = new ArrayList<>();
         StringBuilder sql =  new StringBuilder("SELECT event_id::TEXT, event_title, event_type, event_date, event_status, event_poster FROM events WHERE 1=1");
 
         // Filter by status
         if (status != null && !status.isEmpty()) {
             sql.append(" AND event_status = ?::event_status");
+        }
+
+        if (name != null && !name.isEmpty()) {
+            sql.append(" AND event_title = ?");
         }
 
         // Filter by date

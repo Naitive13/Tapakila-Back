@@ -21,8 +21,8 @@ public class EventService {
         this.eventDAO = eventDAO;
     }
 
-    public List<Event> getAllEvents(String status, String dateFilter) {
-        return eventDAO.getAll(status, dateFilter);
+    public List<Event> getAllEvents(String status, String dateFilter, String title) {
+        return eventDAO.getAll(status, dateFilter, title);
     }
 
     public Event getEventById(String eventId) {
