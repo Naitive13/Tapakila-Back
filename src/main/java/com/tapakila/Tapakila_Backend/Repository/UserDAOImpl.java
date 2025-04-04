@@ -180,6 +180,7 @@ public class UserDAOImpl implements UserDAO {
         ){
             preparedStatement.setString(1, String.valueOf(type));
             preparedStatement.setString(2, id);
+            preparedStatement.executeUpdate();
         }catch (SQLException e){
             throw new RuntimeException(e);
         }

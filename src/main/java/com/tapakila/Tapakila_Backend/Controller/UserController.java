@@ -1,5 +1,6 @@
 package com.tapakila.Tapakila_Backend.Controller;
 
+import com.sun.tools.jconsole.JConsoleContext;
 import com.tapakila.Tapakila_Backend.Entity.Enum.UserType;
 import com.tapakila.Tapakila_Backend.Entity.Reservation;
 import com.tapakila.Tapakila_Backend.Entity.User;
@@ -101,9 +102,11 @@ public class UserController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<User> updateUserInfo(@PathVariable String id,@RequestBody UserType type) {
+    public ResponseEntity<User> updateUserInfo(@PathVariable String id,
+                                               @RequestParam String type) {
         try {
-            userDAO.updateUserType(id, type);
+            userDAO.updateUserType(id, UserType.valueOf(type));
+            System.out.println(type + " TYPE !!!");
             return ResponseEntity.ok(userDAO.getUserByUUID(id));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(userDAO.getUserByUUID(id));
