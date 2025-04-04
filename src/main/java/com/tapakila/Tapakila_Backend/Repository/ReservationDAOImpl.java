@@ -55,7 +55,7 @@ public class ReservationDAOImpl implements ReservationDAO {
 
         try (Connection connection = datasource.getConnection(); PreparedStatement ps = connection.prepareStatement(sql);) {
             ps.setString(1, userId);
-            try ( ResultSet rs = ps.executeQuery()) {
+            try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     reservationList.add(new Reservation(rs.getString("reservation_id"), rs.getString("user_id"), rs.getString("ticket_id"), rs.getTimestamp("reservation_date").toLocalDateTime()));
                 }
@@ -169,7 +169,9 @@ public class ReservationDAOImpl implements ReservationDAO {
         Ticket availableTicket =
                 ticketDAO.getTicketsList().stream()
                         .filter(ticket ->
-                                (ticket.getReservationStatus().equals(ReservationStatus.available) && ticket.getTicketType().equals(toCreate.getTicketType())))
+                                (ticket.getReservationStatus().equals(ReservationStatus.available)
+                                        && (ticket.getEvent_id().equals(toCreate.getEvent_id()))
+                                        && ticket.getTicketType().equals(toCreate.getTicketType())))
                         .toList().getFirst();
 
         this.createReservation(new Reservation(

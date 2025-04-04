@@ -152,7 +152,7 @@ public class TicketDAOImpl implements TicketDAO {
     public Ticket getTicketsById(String ticketID) {
         String sql = """
                                     SELECT ticket_id, event_id, reservation_status, ticket_type FROM tickets 
-                WHERE ticket_id = ?
+                WHERE ticket_id = ?::UUID
                 
                 """;
         try (Connection connection = datasource.getConnection(); PreparedStatement ps = connection.prepareStatement(sql)) {

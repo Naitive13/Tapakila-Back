@@ -12,6 +12,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Repository
 public class EventDAOImpl implements EventDAO {
@@ -25,7 +26,7 @@ public class EventDAOImpl implements EventDAO {
     @Override
     public List<Event> getAll(String status, String dateFilter) {
         List<Event> events = new ArrayList<>();
-        StringBuilder sql =  new StringBuilder("SELECT event_id::TEXT, event_title, event_type, event_date, event_status, event_poster FROM events WHERE 1=1");
+        StringBuilder sql = new StringBuilder("SELECT event_id::TEXT, event_title, event_type, event_date, event_status, event_poster FROM events WHERE 1=1");
 
         // Filter by status
         if (status != null && !status.isEmpty()) {
@@ -65,7 +66,7 @@ public class EventDAOImpl implements EventDAO {
                 }
             }
         } catch (SQLException e) {
-            throw new RuntimeException("Error while retrieving events",e);
+            throw new RuntimeException("Error while retrieving events", e);
         }
         return events;
     }
@@ -74,8 +75,8 @@ public class EventDAOImpl implements EventDAO {
     public Event getById(String eventId) {
         Event event = null;
         String sql = "SELECT event_id::TEXT, event_title, event_type, event_date, event_status, event_poster FROM events WHERE event_id = ?::UUID";
-        try(Connection conn = datasource.getConnection();
-            PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (Connection conn = datasource.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, eventId);
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
@@ -89,7 +90,7 @@ public class EventDAOImpl implements EventDAO {
                 }
             }
         } catch (SQLException e) {
-            throw new RuntimeException("Error while retrieving an event",e);
+            throw new RuntimeException("Error while retrieving an event", e);
         }
         return event;
     }
@@ -99,7 +100,13 @@ public class EventDAOImpl implements EventDAO {
         String sql = "INSERT INTO events (event_id, event_title, event_type, event_date, event_status, event_poster) VALUES (?::UUID, ?, ?::event_type, ?, ?::event_status, ?)";
         try (Connection conn = datasource.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setString(1, event.getEventId());
+
+            String eventId = event.getEventId();
+            if (eventId == null || eventId.isEmpty()) {
+                eventId = UUID.randomUUID().toString();
+                event.setEventId(eventId);
+            }
+            ps.setString(1, eventId);
             ps.setString(2, event.getEventTitle());
             ps.setString(3, event.getEventType().toString());
             ps.setObject(4, event.getEventDate());
