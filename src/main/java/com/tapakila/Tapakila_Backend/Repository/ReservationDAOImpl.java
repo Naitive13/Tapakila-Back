@@ -165,13 +165,15 @@ public class ReservationDAOImpl implements ReservationDAO {
 
 
     @Override
-    public InsertReservationAndTicket createReservationAndTicket(InsertReservationAndTicket toCreate) {
+    public InsertReservationAndTicket createReservationAndTicket(InsertReservationAndTicket toCreate) throws Exception {
         Ticket availableTicket =
                 ticketDAO.getTicketsList().stream()
                         .filter(ticket ->
                                 (ticket.getReservationStatus().equals(ReservationStatus.available) && ticket.getTicketType().equals(toCreate.getTicketType())))
                         .toList().getFirst();
-
+        if (availableTicket == null){
+            throw new Exception("No ticket " + toCreate.getTicketType().toString() + " left ");
+        }
         this.createReservation(new Reservation(
                 UUID.randomUUID().toString(),
                 availableTicket.getTicket_id(),

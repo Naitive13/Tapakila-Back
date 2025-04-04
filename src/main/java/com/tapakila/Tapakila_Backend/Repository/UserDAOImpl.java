@@ -168,6 +168,23 @@ public class UserDAOImpl implements UserDAO {
         }
     }
 
+    @Override
+    public void updateUserType(String id, UserType type) {
+        String sql =
+                """
+               UPDATE users SET user_type=?::user_type where user_id = ?::UUID
+               """;
+
+        try (Connection connection = datasource.getConnection();
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+        ){
+            preparedStatement.setString(1, String.valueOf(type));
+            preparedStatement.setString(2, id);
+        }catch (SQLException e){
+            throw new RuntimeException(e);
+        }
+    }
+
 
     @Override
     public void delete(String userID) {

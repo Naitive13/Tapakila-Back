@@ -18,7 +18,7 @@ public interface ReservationDAO {
 
     public void deleteReservation(String id);
 
-    public InsertReservationAndTicket createReservationAndTicket(InsertReservationAndTicket toCreate);
+    public InsertReservationAndTicket createReservationAndTicket(InsertReservationAndTicket toCreate) throws Exception;
 
 }
 

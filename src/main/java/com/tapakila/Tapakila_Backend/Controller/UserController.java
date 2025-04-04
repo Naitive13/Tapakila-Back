@@ -100,6 +100,16 @@ public class UserController {
         }
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<User> updateUserInfo(@PathVariable String id,@RequestBody UserType type) {
+        try {
+            userDAO.updateUserType(id, type);
+            return ResponseEntity.ok(userDAO.getUserByUUID(id));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(userDAO.getUserByUUID(id));
+        }
+    }
+
     @PostMapping("/create")
     public ResponseEntity<Object> createUser(@RequestBody SignupRequest newUser) {
         try {
